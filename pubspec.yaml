@@ -1,0 +1,48 @@
+name: hr
+description: "A new Flutter project."
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.3.4 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+  dotted_line: ^3.2.0
+  dotted_border: ^2.1.0
+  intl: 0.19.0
+  flutter_datetime_picker: ^1.5.1
+  cupertino_icons: ^1.0.6
+  provider: ^6.0.5
+  http: ^0.13.6
+  flutter_secure_storage: ^9.2.2
+  http_extensions: ^1.0.0
+  win32: ^5.5.0
+  file_picker: ^8.1.7
+  badges: ^3.1.2
+  equatable: ^2.0.7
+  flutter_bloc: ^9.0.0
+  flutter_svg: ^1.1.6
+  auto_size_text: ^3.0.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.0
+  flutter_launcher_icons: ^0.13.1
+
+flutter_icons:
+  android: true
+  ios: true
+  image_path: "assets/images/icon.png" 
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/images/
+    - assets/lang/en.json
+    - assets/lang/ar.json

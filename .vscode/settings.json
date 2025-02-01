@@ -1,0 +1,4 @@
+{
+    "typescript.tsserver.maxTsServerMemory": 1500,
+    "terminal.integrated.scrollback": 500
+}
