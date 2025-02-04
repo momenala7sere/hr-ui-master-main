@@ -4,40 +4,41 @@ import 'package:hr/state_management/generic_event.dart';
 import 'package:hr/state_management/generic_state.dart';
 
 class GenericBloc extends Bloc<GenericEvent, GenericState> {
+  final ApiService apiService = ApiService();
   final Future<dynamic> Function(Map<String, dynamic> data)? submitDataCallback;
   final Future<dynamic> Function()? fetchDataCallback;
-  final ApiService apiService = ApiService();
 
-  GenericBloc({this.submitDataCallback, this.fetchDataCallback}) : super(GenericInitial()) {
+  // Constructor to accept the callbacks
+  GenericBloc({
+    this.submitDataCallback,
+    this.fetchDataCallback,
+  }) : super(GenericInitial()) {
     on<SubmitData>(_onSubmitData);
     on<FetchData>(_onFetchData);
     on<SubmitLeaveRequest>(_onSubmitLeaveRequest);
     on<SubmitVacationRequest>(_onSubmitVacationRequest);
     on<FetchVacationHistory>(_onFetchVacationHistory);
     on<FetchLeaveBalances>(_onFetchLeaveBalances);
-
-    // Inbox events
+    on<FetchEmployeeData>(_onFetchEmployeeData); // Ensure this event is handled
     on<FetchUnreadMessages>(_onFetchUnreadMessages);
     on<MarkMessageAsRead>(_onMarkMessageAsRead);
     on<RefreshInbox>(_onRefreshInbox);
-
-    // Notifications event
-    on<FetchNotifications>(_onFetchNotifications); // Added handler for notifications
+    on<FetchNotifications>(_onFetchNotifications);
   }
 
-  // Fetch notifications
-  Future<void> _onFetchNotifications(FetchNotifications event, Emitter<GenericState> emit) async {
+  // Handle FetchEmployeeData event (requires token and userId)
+  Future<void> _onFetchEmployeeData(FetchEmployeeData event, Emitter<GenericState> emit) async {
     emit(GenericLoading());
     try {
-      final response = await apiService.getUnreadNotifications(event.token);
-      final notifications = response['response'] ?? [];
-      emit(NotificationsLoaded(notifications)); // Use the NotificationsLoaded state
+      final employeeData = await apiService.getEmployeeData(event.token, event.userId); // Fetch employee data from API
+      emit(GenericLoaded(employeeData)); // Emit the data in GenericLoaded state
     } catch (e) {
-      emit(GenericError('Failed to fetch notifications: $e'));
-      print('Error in fetching notifications: $e');  // Log the error for debugging
+      emit(GenericError('Failed to fetch employee data: $e')); // Emit error state if something goes wrong
+      print('Error fetching employee data: $e');
     }
   }
 
+  // Handle SubmitData event
   Future<void> _onSubmitData(SubmitData event, Emitter<GenericState> emit) async {
     emit(GenericLoading());
     try {
@@ -48,10 +49,11 @@ class GenericBloc extends Bloc<GenericEvent, GenericState> {
       emit(GenericLoaded(result));
     } catch (e) {
       emit(GenericError(e.toString()));
-      print('Error in SubmitData: $e');  // Log the error for debugging
+      print('Error in SubmitData: $e');
     }
   }
 
+  // Handle FetchData event
   Future<void> _onFetchData(FetchData event, Emitter<GenericState> emit) async {
     emit(GenericLoading());
     try {
@@ -62,50 +64,11 @@ class GenericBloc extends Bloc<GenericEvent, GenericState> {
       emit(GenericLoaded(result));
     } catch (e) {
       emit(GenericError(e.toString()));
-      print('Error in FetchData: $e');  // Log the error for debugging
+      print('Error in FetchData: $e');
     }
   }
 
-  // Inbox: Fetch unread messages
-  Future<void> _onFetchUnreadMessages(FetchUnreadMessages event, Emitter<GenericState> emit) async {
-    emit(GenericLoading());
-    try {
-      final response = await apiService.getUnreadMessages(event.token);
-      final messages = response['Messages'] ?? []; // Adjust key based on API response
-      emit(GenericLoaded(messages));
-    } catch (e) {
-      emit(GenericError('Failed to fetch unread messages: $e'));
-      print('Error in FetchUnreadMessages: $e');  // Log the error for debugging
-    }
-  }
-
-  // Inbox: Mark a specific message as read
-  Future<void> _onMarkMessageAsRead(MarkMessageAsRead event, Emitter<GenericState> emit) async {
-    emit(GenericLoading());
-    try {
-      // Simulating marking message as read. Replace this with an actual API call if needed.
-      await Future.delayed(const Duration(seconds: 1));
-      emit(GenericLoaded({'messageId': event.messageId, 'status': 'read'}));
-    } catch (e) {
-      emit(GenericError('Failed to mark message as read: $e'));
-      print('Error in MarkMessageAsRead: $e');  // Log the error for debugging
-    }
-  }
-
-  // Inbox: Refresh inbox
-  Future<void> _onRefreshInbox(RefreshInbox event, Emitter<GenericState> emit) async {
-    emit(GenericLoading());
-    try {
-      final response = await apiService.getUnreadMessages(event.token); // Provide token if required
-      final refreshedMessages = response['Messages'] ?? [];
-      emit(GenericLoaded(refreshedMessages));
-    } catch (e) {
-      emit(GenericError('Failed to refresh inbox: $e'));
-      print('Error in RefreshInbox: $e');  // Log the error for debugging
-    }
-  }
-
-  // Leave request and other handlers (Unchanged)
+  // Handle SubmitLeaveRequest event
   Future<void> _onSubmitLeaveRequest(SubmitLeaveRequest event, Emitter<GenericState> emit) async {
     emit(GenericLoading());
     try {
@@ -114,14 +77,15 @@ class GenericBloc extends Bloc<GenericEvent, GenericState> {
         'message': 'Leave request submitted successfully!',
         'data': event.data,
       };
-      await Future.delayed(const Duration(seconds: 2)); // Simulate API call
+      await Future.delayed(const Duration(seconds: 2));
       emit(GenericLoaded(result));
     } catch (e) {
       emit(GenericError('Failed to submit leave request: $e'));
-      print('Error in SubmitLeaveRequest: $e');  // Log the error for debugging
+      print('Error in SubmitLeaveRequest: $e');
     }
   }
 
+  // Handle SubmitVacationRequest event
   Future<void> _onSubmitVacationRequest(SubmitVacationRequest event, Emitter<GenericState> emit) async {
     emit(GenericLoading());
     try {
@@ -130,14 +94,15 @@ class GenericBloc extends Bloc<GenericEvent, GenericState> {
         'message': 'Vacation request submitted successfully!',
         'data': event.data,
       };
-      await Future.delayed(const Duration(seconds: 2)); // Simulate API call
+      await Future.delayed(const Duration(seconds: 2));
       emit(GenericLoaded(result));
     } catch (e) {
       emit(GenericError('Failed to submit vacation request: $e'));
-      print('Error in SubmitVacationRequest: $e');  // Log the error for debugging
+      print('Error in SubmitVacationRequest: $e');
     }
   }
 
+  // Handle FetchVacationHistory event
   Future<void> _onFetchVacationHistory(FetchVacationHistory event, Emitter<GenericState> emit) async {
     emit(GenericLoading());
     try {
@@ -175,10 +140,11 @@ class GenericBloc extends Bloc<GenericEvent, GenericState> {
       emit(GenericLoaded(filteredHistory));
     } catch (e) {
       emit(GenericError('Failed to fetch vacation history: $e'));
-      print('Error in FetchVacationHistory: $e');  // Log the error for debugging
+      print('Error in FetchVacationHistory: $e');
     }
   }
 
+  // Handle FetchLeaveBalances event
   Future<void> _onFetchLeaveBalances(FetchLeaveBalances event, Emitter<GenericState> emit) async {
     emit(GenericLoading());
     try {
@@ -201,7 +167,58 @@ class GenericBloc extends Bloc<GenericEvent, GenericState> {
       }));
     } catch (e) {
       emit(GenericError('Failed to fetch leave balances: $e'));
-      print('Error in FetchLeaveBalances: $e');  // Log the error for debugging
+      print('Error in FetchLeaveBalances: $e');
+    }
+  }
+
+  // Handle FetchUnreadMessages event
+  Future<void> _onFetchUnreadMessages(FetchUnreadMessages event, Emitter<GenericState> emit) async {
+    emit(GenericLoading());
+    try {
+      final response = await apiService.getUnreadMessages(event.token);
+      final messages = response['Messages'] ?? [];
+      emit(GenericLoaded(messages));
+    } catch (e) {
+      emit(GenericError('Failed to fetch unread messages: $e'));
+      print('Error in FetchUnreadMessages: $e');
+    }
+  }
+
+  // Handle MarkMessageAsRead event
+  Future<void> _onMarkMessageAsRead(MarkMessageAsRead event, Emitter<GenericState> emit) async {
+    emit(GenericLoading());
+    try {
+      await Future.delayed(const Duration(seconds: 1));
+      emit(GenericLoaded({'messageId': event.messageId, 'status': 'read'}));
+    } catch (e) {
+      emit(GenericError('Failed to mark message as read: $e'));
+      print('Error in MarkMessageAsRead: $e');
+    }
+  }
+
+  // Handle RefreshInbox event
+  Future<void> _onRefreshInbox(RefreshInbox event, Emitter<GenericState> emit) async {
+    emit(GenericLoading());
+    try {
+      final response = await apiService.getUnreadMessages(event.token);
+      final refreshedMessages = response['Messages'] ?? [];
+      emit(GenericLoaded(refreshedMessages));
+    } catch (e) {
+      emit(GenericError('Failed to refresh inbox: $e'));
+      print('Error in RefreshInbox: $e');
+    }
+  }
+
+  // Handle FetchNotifications event
+  Future<void> _onFetchNotifications(FetchNotifications event, Emitter<GenericState> emit) async {
+    emit(GenericLoading());
+    try {
+      final response = await apiService.getUnreadNotifications(event.token);
+      final notifications = response['response'] ?? [];
+      emit(NotificationsLoaded(notifications));
+    } catch (e) {
+      emit(GenericError('Failed to fetch notifications: $e'));
+      print('Error in FetchNotifications: $e');
     }
   }
 }

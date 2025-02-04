@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:async';
 import 'package:http/io_client.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
@@ -9,13 +10,14 @@ class ApiService {
 
   // API Endpoints
   static const String loginEndpoint = 'Login/Login';
+  static const String getEmployeeDataEndpoint = 'Users/GetEmployeeData'; // Correct endpoint
   static const String getLeaveBalanceEndpoint = 'Users/GetLeaveBalance';
   static const String getSickLeaveBalanceEndpoint = 'Users/GetSickLeaveBalance';
   static const String submitLeaveRequestEndpoint = 'Users/SubmitLeaveRequest';
   static const String getUnreadInboxCountEndpoint = 'Users/GetUnreadInboxCount';
   static const String getLeaveTypeEndpoint = 'Masters/GetLeaveType';
   static const String getUserMenuEndpoint = 'Users/GetUserMenu';
-  static const String getVacationHistoryEndpoint = 'Users/GetVacationHistory'; // New endpoint
+  static const String getVacationHistoryEndpoint = 'Users/GetVacationHistory';
 
   // Create a custom HTTP client to bypass SSL validation
   HttpClient _createHttpClient() {
@@ -25,7 +27,41 @@ class ApiService {
     return httpClient;
   }
 
-  // General API POST request method
+  // General API GET request method with timeout
+  Future<Map<String, dynamic>> _getRequest(String endpoint, {String? token}) async {
+    final client = IOClient(_createHttpClient());
+    final url = Uri.parse('$baseUrl/$endpoint');
+
+    final headers = {
+      'Content-Type': 'application/json',
+      if (token != null) 'Token': token,
+    };
+
+    print('GET Request to $endpoint');
+    print('Headers: $headers');
+
+    try {
+      final response = await client.get(url, headers: headers).timeout(
+        const Duration(seconds: 10),
+        onTimeout: () {
+          throw TimeoutException("API request timed out");
+        },
+      );
+
+      print('Response Status: ${response.statusCode}');
+      print('Response Body: ${response.body}');
+
+      if (response.statusCode == 200) {
+        return jsonDecode(response.body);
+      } else {
+        throw Exception('HTTP Error: ${response.statusCode} - ${response.body}');
+      }
+    } catch (e) {
+      throw Exception('API request failed: $e');
+    }
+  }
+
+  // General API POST request method with timeout
   Future<Map<String, dynamic>> _postRequest(String endpoint, Map<String, dynamic> body, {String? token}) async {
     final client = IOClient(_createHttpClient());
     final url = Uri.parse('$baseUrl/$endpoint');
@@ -39,56 +75,46 @@ class ApiService {
     print('Headers: $headers');
     print('Body: ${jsonEncode(body)}');
 
-    final response = await client.post(
-      url,
-      headers: headers,
-      body: jsonEncode(body),
-    );
+    try {
+      final response = await client.post(url, headers: headers, body: jsonEncode(body)).timeout(
+        const Duration(seconds: 10),
+        onTimeout: () {
+          throw TimeoutException("API request timed out");
+        },
+      );
 
-    print('Response Status: ${response.statusCode}');
-    print('Response Body: ${response.body}');
+      print('Response Status: ${response.statusCode}');
+      print('Response Body: ${response.body}');
 
-    if (response.statusCode == 200) {
-      final responseBody = jsonDecode(response.body);
-      if (responseBody['success'] == true) {
-        return responseBody;
+      if (response.statusCode == 200) {
+        final responseBody = jsonDecode(response.body);
+        if (responseBody['success'] == true) {
+          return responseBody;
+        } else {
+          throw Exception('API Error: ${responseBody['messageText']}');
+        }
       } else {
-        throw Exception('API Error: ${responseBody['messageText']}');
+        throw Exception('HTTP Error: ${response.statusCode} - ${response.body}');
       }
-    } else {
-      throw Exception('HTTP Error: ${response.statusCode} - ${response.body}');
+    } catch (e) {
+      throw Exception('API request failed: $e');
     }
   }
 
-  // General API GET request method
-  Future<Map<String, dynamic>> _getRequest(String endpoint, {String? token}) async {
-    final client = IOClient(_createHttpClient());
-    final url = Uri.parse('$baseUrl/$endpoint');
-
-    final headers = {
-      'Content-Type': 'application/json',
-      if (token != null) 'Token': token,
-    };
-
-    print('GET Request to $endpoint');
-    print('Headers: $headers');
-
-    final response = await client.get(
-      url,
-      headers: headers,
-    );
-
-    print('Response Status: ${response.statusCode}');
-    print('Response Body: ${response.body}');
-
-    if (response.statusCode == 200) {
-      return jsonDecode(response.body);
-    } else {
-      throw Exception('HTTP Error: ${response.statusCode} - ${response.body}');
+  // Get Employee Data API call
+  Future<Map<String, dynamic>> getEmployeeData(String token, int userId) async {
+    try {
+      return await _postRequest(
+        getEmployeeDataEndpoint, 
+        {'UserID': userId}, 
+        token: token,
+      );
+    } catch (e) {
+      throw Exception('Failed to fetch employee data: $e');
     }
   }
 
-  // Get token API call
+  // Get token from API
   Future<String> getToken(String username, String password) async {
     try {
       final response = await _postRequest(
@@ -170,7 +196,7 @@ class ApiService {
     try {
       return await _postRequest(
         getUnreadInboxCountEndpoint,
-        {'EmpNo': 1},
+        {'EmpNo': 1}, // Use actual user ID or employee number
         token: token,
       );
     } catch (e) {
@@ -183,7 +209,7 @@ class ApiService {
     try {
       final response = await _postRequest(
         getUnreadInboxCountEndpoint,
-        {'EmpNo': 1},
+        {'EmpNo': 1}, // Use actual user ID or employee number
         token: token,
       );
       print('Unread Messages Response: $response');
@@ -196,23 +222,16 @@ class ApiService {
   // Get Leave Type API call
   Future<Map<String, dynamic>> getLeaveType(String token) async {
     try {
-      final body = <String, dynamic>{};
       final response = await _postRequest(
         getLeaveTypeEndpoint,
-        body,
+        {},
         token: token,
       );
 
-      // Validate response structure
       if (response.containsKey('response') && response['response'] != null) {
-        final leaveTypes = response['response'];
-        if (leaveTypes is List) {
-          return response;
-        } else {
-          throw Exception('Unexpected response format: ${leaveTypes.toString()}');
-        }
+        return response;
       } else {
-        throw Exception('Response does not contain the expected "response" field or it is null.');
+        throw Exception('No leave type data found.');
       }
     } catch (e) {
       throw Exception('Failed to fetch leave types: $e');
@@ -235,19 +254,23 @@ class ApiService {
     }
   }
 
-  // Get Vacation History API call
-  Future<Map<String, dynamic>> getVacationHistory(DateTime fromDate, DateTime toDate, {String? token}) async {
+  // Fetch userId from the token
+  Future<int?> getUserIdFromToken(String token) async {
     try {
-      return await _postRequest(
-        getVacationHistoryEndpoint,
-        {
-          'fromDate': fromDate.toIso8601String(),
-          'toDate': toDate.toIso8601String(),
-        },
+      final response = await _postRequest(
+        'UserLogin/Login', // Correct endpoint for login
+        {},
         token: token,
       );
+
+      if (response['success'] == true && response['response'] is List && response['response'].isNotEmpty) {
+        return response['response'][0]['userID']; // Extract userID
+      } else {
+        return null;
+      }
     } catch (e) {
-      throw Exception('Failed to fetch vacation history: $e');
+      print("Error retrieving user ID: $e");
+      return null;
     }
   }
 }

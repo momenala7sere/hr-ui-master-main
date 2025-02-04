@@ -16,6 +16,7 @@ import 'package:hr/screens/ResetPasswordPage.dart';
 import 'package:hr/screens/home/HomePage.dart';
 import 'state_management/generic_bloc.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await LocalizationService.load(const Locale('en', 'US')); // Default language
@@ -35,8 +36,14 @@ class HRApp extends StatelessWidget {
         BlocProvider(
           create: (_) => GenericBloc(
             submitDataCallback: (data) async {
-              // Default callback for GenericBloc actions
-              throw Exception("No callback provided for this action.");
+              // Mock callback for testing
+              print('Data submitted: $data');
+              return Future.value(data); // Return the same data for now
+            },
+            fetchDataCallback: () async {
+              // Mock callback for fetching data
+              print('Fetching data...');
+              return Future.value('Fetched Data'); // Return mock fetched data
             },
           ),
         ),

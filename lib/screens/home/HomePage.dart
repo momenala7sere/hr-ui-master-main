@@ -85,7 +85,7 @@ class _HomePageState extends State<HomePage> {
                   label: 'Profile',
                 ),
               ],
-              selectedItemColor: Color(0xFFCE5E52),
+              selectedItemColor: const Color(0xFFCE5E52),
               unselectedItemColor: Colors.grey,
             ),
             floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
@@ -238,6 +238,12 @@ class Section extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Get the screen height dynamically
+    double screenHeight = MediaQuery.of(context).size.height;
+
+    // Dynamically calculate vertical spacing based on screen height
+    double spacing = screenHeight * 0.05; // Increase spacing multiplier for better layout
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8.0),
       child: Column(
@@ -255,8 +261,8 @@ class Section extends StatelessWidget {
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 4,  // Display 4 cards per row
                 crossAxisSpacing: 12.0,
-                mainAxisSpacing: 12.0,
-                childAspectRatio: 1,
+                mainAxisSpacing: 3,  // Increased vertical spacing dynamically
+                childAspectRatio: 0.660, // Aspect ratio remains the same (square cards)
               ),
               itemCount: itemCount,
               itemBuilder: (context, index) =>

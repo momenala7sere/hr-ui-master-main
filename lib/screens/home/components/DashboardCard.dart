@@ -8,18 +8,12 @@ class DashboardCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Fixed card size
     double cardSize = 55.0;
 
     return GestureDetector(
       onTap: () {
         if (cardData.routeName.isNotEmpty) {
-          Navigator.pushNamed(
-            context,
-            cardData.routeName,
-          );
-        } else {
-          print("DEBUG: No route defined for ${cardData.title}");
+          Navigator.pushNamed(context, cardData.routeName);
         }
       },
       child: Column(
@@ -31,34 +25,43 @@ class DashboardCard extends StatelessWidget {
               borderRadius: BorderRadius.circular(10.0),
             ),
             child: Container(
-              height: cardSize, // Fixed height
-              width: cardSize, // Fixed width
+              height: cardSize,
+              width: cardSize,
               decoration: BoxDecoration(
-                color: cardData.color, // Dynamic background color
+                color: cardData.color,
                 borderRadius: BorderRadius.circular(10.0),
               ),
               child: Center(
                 child: Icon(
-                  cardData.icon, // Icon remains the same size
+                  cardData.icon,
                   size: 32.0,
-                  color: Colors.white, // Icon color set to white
+                  color: Colors.white,
                 ),
               ),
             ),
           ),
-          const SizedBox(height: 4.0), // Increased spacing between card and text
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 20.0), // Padding for text
-            child: Text(
-              cardData.title,
-              textAlign: TextAlign.center,
-              style: const TextStyle(
-                fontSize: 10.0, // Fixed font size for better readability
-                fontWeight: FontWeight.normal,
-                color: Colors.black, // Text color
+          const SizedBox(height: 6.0), // Slightly increased spacing for better separation
+          
+          // --- Improved Text Layout ---
+          ConstrainedBox(
+            constraints: BoxConstraints(
+              maxWidth: cardSize + 35, // Slightly increased width for better alignment
+            ),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 4.0),
+              child: Text(
+                cardData.title.replaceAll("_", " "), // Replace underscores with spaces
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  fontSize: 11.0, // Slightly larger for readability
+                  fontWeight: FontWeight.w500, // Better font weight for clarity
+                  color: Colors.black,
+                  height: 1.3, // More comfortable line spacing
+                ),
+                maxLines: 2,
+                softWrap: true, // Ensure text wraps properly
+                overflow: TextOverflow.visible, // Prevent ellipsis cutting important words
               ),
-               // Prevent text overflow with ellipsis
-              maxLines: 1, // Allow text to wrap into 2 lines if needed
             ),
           ),
         ],

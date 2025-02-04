@@ -13,10 +13,10 @@ class LoginPage extends StatefulWidget {
   final Locale currentLocale;
 
   const LoginPage({
-    super.key,
+    Key? key,
     required this.onChangeLanguage,
     required this.currentLocale,
-  });
+  }) : super(key: key);
 
   @override
   _LoginPageState createState() => _LoginPageState();
@@ -119,54 +119,70 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
+    // Wrap the content in SafeArea and SingleChildScrollView to handle keyboard appearance.
     return Scaffold(
       backgroundColor: const Color(0xff3D3D3D),
-      body: Center(
+      body: SafeArea(
         child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(20.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                const SizedBox(height: 20),
-                const Image(
-                  image: AssetImage('assets/images/karlogo.png'),
-                  width: 70,
-                  height: 70,
-                ),
-                const SizedBox(height: 20),
-                _buildHeader(),
-                const SizedBox(height: 50),
-                _buildTextField(
-                  controller: _usernameController,
-                  label: LocalizationService.translate('username'),
-                  icon: Icons.person,
-                ),
-                const SizedBox(height: 20),
-                _buildTextField(
-                  controller: _passwordController,
-                  label: LocalizationService.translate('password'),
-                  icon: Icons.lock,
-                  isPassword: true,
-                  onVisibilityToggle: () {
-                    setState(() {
-                      _isPasswordVisible = !_isPasswordVisible;
-                    });
-                  },
-                  isPasswordVisible: _isPasswordVisible,
-                ),
-                const SizedBox(height: 20),
-                _buildRememberMeRow(),
-                const SizedBox(height: 20),
-                _buildLoginButton(),
-                const SizedBox(height: 30),
-                _buildLanguageToggle(),
-                const SizedBox(height: 15),
-                Text(
-                  LocalizationService.translate('rights_reserved'),
-                  style: const TextStyle(color: Colors.white, fontSize: 12),
-                ),
-              ],
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+          child: ConstrainedBox(
+            // Ensure the column fills the available height
+            constraints: BoxConstraints(
+              minHeight: MediaQuery.of(context).size.height -
+                  MediaQuery.of(context).padding.top -
+                  MediaQuery.of(context).padding.bottom,
+            ),
+            child: IntrinsicHeight(
+              child: Column(
+                children: [
+                  // Logo and header
+                  const SizedBox(height: 40),
+                  const Image(
+                    image: AssetImage('assets/images/karlogo.png'),
+                    width: 70,
+                    height: 70,
+                  ),
+                  const SizedBox(height: 20),
+                  _buildHeader(),
+                  const SizedBox(height: 50),
+                  // Username text field
+                  _buildTextField(
+                    controller: _usernameController,
+                    label: LocalizationService.translate('username'),
+                    icon: Icons.person,
+                  ),
+                  const SizedBox(height: 20),
+                  // Password text field
+                  _buildTextField(
+                    controller: _passwordController,
+                    label: LocalizationService.translate('password'),
+                    icon: Icons.lock,
+                    isPassword: true,
+                    onVisibilityToggle: () {
+                      setState(() {
+                        _isPasswordVisible = !_isPasswordVisible;
+                      });
+                    },
+                    isPasswordVisible: _isPasswordVisible,
+                  ),
+                  const SizedBox(height: 20),
+                  _buildRememberMeRow(),
+                  const SizedBox(height: 20),
+                  _buildLoginButton(),
+                  const SizedBox(height: 30),
+                  _buildLanguageToggle(),
+                  // Spacer to push the footer to the bottom
+                  const Spacer(),
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 20.0),
+                    child: Text(
+                      '© ${DateTime.now().year} All rights reserved',
+                      style: const TextStyle(color: Colors.white, fontSize: 12),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ),
@@ -203,6 +219,8 @@ class _LoginPageState extends State<LoginPage> {
         prefixIcon: Icon(icon, color: Colors.white),
         labelText: label,
         labelStyle: const TextStyle(color: Colors.white),
+        // Added contentPadding to prevent overlapping issues
+        contentPadding: const EdgeInsets.symmetric(vertical: 20, horizontal: 12),
         suffixIcon: isPassword
             ? IconButton(
                 icon: Icon(
@@ -215,6 +233,10 @@ class _LoginPageState extends State<LoginPage> {
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10.0),
           borderSide: const BorderSide(color: Colors.white),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10.0),
+          borderSide: const BorderSide(color: Colors.white54),
         ),
       ),
       style: const TextStyle(color: Colors.white),

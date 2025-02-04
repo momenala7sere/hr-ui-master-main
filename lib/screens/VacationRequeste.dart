@@ -139,174 +139,171 @@ class _VacationRequestFormState extends State<VacationRequestForm> {
           ),
           body: Padding(
             padding: const EdgeInsets.all(16.0),
-            child: Form(
-              key: _formKey,
-              child: ListView(
-                children: [
-                  DropdownButtonFormField<String>(
-                    decoration: _inputDecoration('vacation_type'),
-                    value: _vacationType,
-                    items: [
-                      DropdownMenuItem(value: 'funeral', child: Text(LocalizationService.translate('funeral'))),
-                      DropdownMenuItem(value: 'sick', child: Text(LocalizationService.translate('sick'))),
-                      DropdownMenuItem(value: 'official', child: Text(LocalizationService.translate('official'))),
-                      DropdownMenuItem(value: 'maternity', child: Text(LocalizationService.translate('maternity'))),
-                      DropdownMenuItem(value: 'overtime', child: Text(LocalizationService.translate('overtime'))),
-                      DropdownMenuItem(value: 'unpaid_vacation', child: Text(LocalizationService.translate('unpaid_vacation'))),
-                      DropdownMenuItem(value: 'umrah', child: Text(LocalizationService.translate('umrah'))),
-                    ],
-                    onChanged: (String? newValue) {
-                      setState(() {
-                        _vacationType = newValue;
-                      });
-                    },
+            child: ListView(
+              children: [
+                DropdownButtonFormField<String>(
+                  decoration: _inputDecoration('vacation_type'),
+                  value: _vacationType,
+                  items: [
+                    DropdownMenuItem(value: 'funeral', child: Text(LocalizationService.translate('funeral'))),
+                    DropdownMenuItem(value: 'sick', child: Text(LocalizationService.translate('sick'))),
+                    DropdownMenuItem(value: 'official', child: Text(LocalizationService.translate('official'))),
+                    DropdownMenuItem(value: 'maternity', child: Text(LocalizationService.translate('maternity'))),
+                    DropdownMenuItem(value: 'overtime', child: Text(LocalizationService.translate('overtime'))),
+                    DropdownMenuItem(value: 'unpaid_vacation', child: Text(LocalizationService.translate('unpaid_vacation'))),
+                    DropdownMenuItem(value: 'umrah', child: Text(LocalizationService.translate('umrah'))),
+                  ],
+                  onChanged: (String? newValue) {
+                    setState(() {
+                      _vacationType = newValue;
+                    });
+                  },
+                ),
+                const SizedBox(height: 16.0),
+                TextFormField(
+                  readOnly: true,
+                  controller: _startDateController,
+                  decoration: _inputDecoration('start_date', suffixIcon: Icon(Icons.calendar_today)),
+                  onTap: () => _selectDate(context, true),
+                ),
+                const SizedBox(height: 16.0),
+                TextFormField(
+                  readOnly: true,
+                  controller: _endDateController,
+                  decoration: _inputDecoration('end_date', suffixIcon: Icon(Icons.calendar_today)),
+                  onTap: () => _selectDate(context, false),
+                ),
+                const SizedBox(height: 16.0),
+                TextFormField(
+                  decoration: _inputDecoration('description'),
+                  maxLines: 3,
+                  onChanged: (value) {
+                    _description = value;
+                  },
+                ),
+                const SizedBox(height: 16.0),
+                TextFormField(
+                  decoration: _inputDecoration('employee_address'),
+                  onChanged: (value) {
+                    _employeeAddress = value;
+                  },
+                ),
+                const SizedBox(height: 16.0),
+                TextFormField(
+                  decoration: _inputDecoration('alternative_employee'),
+                  onChanged: (value) {
+                    _alternativeEmployee = value;
+                  },
+                ),
+                const SizedBox(height: 16.0),
+                TextFormField(
+                  decoration: _inputDecoration('phone_number'),
+                  onChanged: (value) {
+                    _employeePhoneNumber = value;
+                  },
+                ),
+                const SizedBox(height: 16.0),
+                Container(
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.grey.shade300, width: 0.5),
+                    borderRadius: BorderRadius.circular(5),
                   ),
-                  const SizedBox(height: 16.0),
-                  TextFormField(
-                    readOnly: true,
-                    controller: _startDateController,
-                    decoration: _inputDecoration('start_date', suffixIcon: Icon(Icons.calendar_today)),
-                    onTap: () => _selectDate(context, true),
-                  ),
-                  const SizedBox(height: 16.0),
-                  TextFormField(
-                    readOnly: true,
-                    controller: _endDateController,
-                    decoration: _inputDecoration('end_date', suffixIcon: Icon(Icons.calendar_today)),
-                    onTap: () => _selectDate(context, false),
-                  ),
-                  const SizedBox(height: 16.0),
-                  TextFormField(
-                    decoration: _inputDecoration('description'),
-                    maxLines: 3,
-                    onChanged: (value) {
-                      _description = value;
-                    },
-                  ),
-                  const SizedBox(height: 16.0),
-                  TextFormField(
-                    decoration: _inputDecoration('employee_address'),
-                    onChanged: (value) {
-                      _employeeAddress = value;
-                    },
-                  ),
-                  const SizedBox(height: 16.0),
-                  TextFormField(
-                    decoration: _inputDecoration('alternative_employee'),
-                    onChanged: (value) {
-                      _alternativeEmployee = value;
-                    },
-                  ),
-                  const SizedBox(height: 16.0),
-                  TextFormField(
-                    decoration: _inputDecoration('phone_number'),
-                    onChanged: (value) {
-                      _employeePhoneNumber = value;
-                    },
-                  ),
-                  const SizedBox(height: 16.0),
-                  Container(
-                    decoration: BoxDecoration(
-                      border: Border.all(color: Colors.grey.shade300, width: 0.5),
-                      borderRadius: BorderRadius.circular(5),
-                    ),
-                    child: InkWell(
-                      onTap: () async {
-                        FilePickerResult? result = await FilePicker.platform.pickFiles();
+                  child: InkWell(
+                    onTap: () async {
+                      FilePickerResult? result = await FilePicker.platform.pickFiles();
 
-                        if (result != null) {
-                          setState(() {
-                            _selectedFile = result.files.single.name;
-                          });
+                      if (result != null) {
+                        setState(() {
+                          _selectedFile = result.files.single.name;
+                        });
 
-                          print("Selected File: ${result.files.single.path}");
-                        } else {
-                          print("File selection canceled.");
-                        }
-                      },
-                      child: Padding(
-                        padding: const EdgeInsets.all(16.0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            const Icon(Icons.attach_file),
-                            const SizedBox(width: 8.0),
-                            Text(
-                              _selectedFile != null
-                                  ? _selectedFile!
-                                  : LocalizationService.translate('attach'),
-                            ),
-                          ],
-                        ),
+                        print("Selected File: ${result.files.single.path}");
+                      } else {
+                        print("File selection canceled.");
+                      }
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Icon(Icons.attach_file),
+                          const SizedBox(width: 8.0),
+                          Text(
+                            _selectedFile != null
+                                ? _selectedFile!
+                                : LocalizationService.translate('attach'),
+                          ),
+                        ],
                       ),
                     ),
                   ),
-                  const SizedBox(height: 16.0),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        SizedBox(
-                          width: 120,
-                          height: 35,
-                          child: OutlinedButton.icon(
-                            onPressed: () {
-                              // Handle discard
-                            },
-                            icon: const Icon(
-                              Icons.delete,
-                              size: 16,
-                              color: Colors.black,
+                ),
+                const SizedBox(height: 16.0),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      SizedBox(
+                        width: 120,
+                        height: 35,
+                        child: OutlinedButton.icon(
+                          onPressed: () {
+                            // Handle discard
+                          },
+                          icon: const Icon(
+                            Icons.delete,
+                            size: 16,
+                            color: Colors.black,
+                          ),
+                          label: Text(
+                            LocalizationService.translate('discard'),
+                            style: const TextStyle(color: Colors.black),
+                          ),
+                          style: OutlinedButton.styleFrom(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(6.0),
                             ),
-                            label: Text(
-                              LocalizationService.translate('discard'),
-                              style: const TextStyle(color: Colors.black),
-                            ),
-                            style: OutlinedButton.styleFrom(
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(6.0),
-                              ),
-                              side: BorderSide(
-                                color: Colors.grey.shade300,
-                                width: 0.5,
-                              ),
+                            side: BorderSide(
+                              color: Colors.grey.shade300,
+                              width: 0.5,
                             ),
                           ),
                         ),
-                        SizedBox(
-                          width: 120,
-                          height: 35,
-                          child: OutlinedButton.icon(
-                            onPressed: () => _submitForm(context),
-                            icon: const Icon(
-                              Icons.save,
-                              size: 16,
+                      ),
+                      SizedBox(
+                        width: 120,
+                        height: 35,
+                        child: OutlinedButton.icon(
+                          onPressed: () => _submitForm(context),
+                          icon: const Icon(
+                            Icons.save,
+                            size: 16,
+                            color: Color.fromARGB(255, 255, 255, 255),
+                          ),
+                          label: Text(
+                            LocalizationService.translate('save'),
+                            style: const TextStyle(
                               color: Color.fromARGB(255, 255, 255, 255),
                             ),
-                            label: Text(
-                              LocalizationService.translate('save'),
-                              style: const TextStyle(
-                                color: Color.fromARGB(255, 255, 255, 255),
-                              ),
+                          ),
+                          style: OutlinedButton.styleFrom(
+                            backgroundColor: Colors.red,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(6.0),
                             ),
-                            style: OutlinedButton.styleFrom(
-                              backgroundColor: Colors.red,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(6.0),
-                              ),
-                              side: BorderSide(
-                                color: Color(0xffCE5E52),
-                                width: 0.5,
-                              ),
+                            side: BorderSide(
+                              color: Color(0xffCE5E52),
+                              width: 0.5,
                             ),
                           ),
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
         ),

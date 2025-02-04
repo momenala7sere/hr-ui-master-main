@@ -8,15 +8,23 @@ abstract class GenericEvent extends Equatable {
 /// Generic event for submitting data
 class SubmitData extends GenericEvent {
   final Map<String, dynamic> data;
+  final Future<dynamic> Function(Map<String, dynamic> data)? submitDataCallback; // Callback for submitting data
 
-  SubmitData({required this.data});
+  SubmitData({required this.data, this.submitDataCallback});
 
   @override
-  List<Object?> get props => [data];
+  List<Object?> get props => [data];  // Do not add callback to props
 }
 
 /// Event for fetching data (general-purpose)
-class FetchData extends GenericEvent {}
+class FetchData extends GenericEvent {
+  final Future<dynamic> Function()? fetchDataCallback; // Callback for fetching data
+
+  FetchData({this.fetchDataCallback});
+
+  @override
+  List<Object?> get props => [fetchDataCallback];
+}
 
 /// Event for submitting a leave request
 class SubmitLeaveRequest extends GenericEvent {
@@ -82,12 +90,12 @@ class MarkMessageAsRead extends GenericEvent {
 
 /// Event for refreshing inbox
 class RefreshInbox extends GenericEvent {
-  final String token; // Add token field here
+  final String token;
 
   RefreshInbox({required this.token});
 
   @override
-  List<Object?> get props => [token]; // Ensure token is included in props
+  List<Object?> get props => [token];
 }
 
 /// Event for fetching notifications
@@ -98,4 +106,15 @@ class FetchNotifications extends GenericEvent {
 
   @override
   List<Object?> get props => [token];
+}
+
+/// Event for fetching employee data
+class FetchEmployeeData extends GenericEvent {
+  final String token;
+  final int userId;  // Added userId for fetching employee data
+
+  FetchEmployeeData({required this.token, required this.userId});
+
+  @override
+  List<Object?> get props => [token, userId];  // Include userId in props for equality comparison
 }

@@ -26,7 +26,7 @@ final List<CardData> cardItems = [
     routeName: '/personal',
   ),
   CardData(
-    title: LocalizationService.translate('sick_leave_request') ??
+    title: LocalizationService.translate('sick leave request') ??
         'Sick Leave Request',
     icon: Icons.local_hospital,
     color: const Color(0xFFCE5E52),
@@ -76,7 +76,7 @@ final List<CardData> cardItems = [
     routeName: '/leaves-history',
   ),
   CardData(
-    title: LocalizationService.translate('approved_leaves_history') ??
+    title: LocalizationService.translate('approved leaves history') ??
         'Approved Leaves History',
     icon: Icons.check_circle,
     color: const Color(0xFFCE5E52),

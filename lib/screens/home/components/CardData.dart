@@ -39,7 +39,7 @@ class CardData {
   static String _getRouteNameForTitle(String title) {
     if (title.contains('Vacation')) return '/vacation-request';
     if (title.contains('Leave') && title.contains('Personal')) return '/personal-leave-request';
-    if (title.contains('Leave') && title.contains('Sick')) return '/sick-leave-request';
+    if (title.contains('Leave') && title.contains('Sick')) return '/sick leave request';
     if (title.contains('History') && title.contains('Vacation')) return '/vacation-history';
     if (title.contains('History') && title.contains('Leave')) return '/leaves-history';
     if (title.contains('HR')) return '/Hr-request';
