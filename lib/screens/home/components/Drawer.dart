@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hr/state_management/localization_service.dart'; // Import localization service
 import 'package:hr/screens/home/HomePage.dart';
 
-Widget buildDrawer() {
+Widget buildDrawer({required List<dynamic> userMenu}) {
   return Drawer(
     child: ListView(
       padding: EdgeInsets.zero,
@@ -40,6 +40,14 @@ Widget buildDrawer() {
             ],
           ),
         ),
+        // Dynamically create user menu items
+        ...userMenu.map((item) {
+          return buildDrawerItem(
+            Icons.menu, // Replace with actual icon or use dynamic icon if provided in data
+            item['name'] ?? 'Unnamed', // Use 'name' key or fallback text
+          );
+        }).toList(),
+        buildDivider(),
         buildDrawerItem(
           Icons.account_circle_rounded,
           LocalizationService.translate("employee_code"),

@@ -32,14 +32,14 @@ class ProfileScreen extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         const Text(
-                          'John Doe', // Replace with dynamic username
+                          'Hasan Ahmad ', // Replace with dynamic username
                           style: TextStyle(
                             fontSize: 22,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
                         Text(
-                          'johndoe@example.com', // Replace with dynamic email
+                          'Hasanahmad@example.com', // Replace with dynamic email
                           style: TextStyle(
                             fontSize: 16,
                             color: Colors.grey[600],

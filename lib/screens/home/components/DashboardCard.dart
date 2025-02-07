@@ -58,7 +58,7 @@ class DashboardCard extends StatelessWidget {
                   color: Colors.black,
                   height: 1.3, // More comfortable line spacing
                 ),
-                maxLines: 2,
+                maxLines: 4,
                 softWrap: true, // Ensure text wraps properly
                 overflow: TextOverflow.visible, // Prevent ellipsis cutting important words
               ),
