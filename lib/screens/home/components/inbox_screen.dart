@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:hr/screens/home/HomePage.dart';
 import 'package:hr/state_management/generic_bloc.dart';
 import 'package:hr/state_management/generic_event.dart';
 import 'package:hr/state_management/generic_state.dart';
 import 'package:hr/api/api_service.dart';
+import 'package:hr/screens/home/HomePage.dart';
 
 class InboxScreen extends StatefulWidget {
   const InboxScreen({Key? key}) : super(key: key);
@@ -13,59 +13,52 @@ class InboxScreen extends StatefulWidget {
   _InboxScreenState createState() => _InboxScreenState();
 }
 
-class _InboxScreenState extends State<InboxScreen> {
+class _InboxScreenState extends State<InboxScreen> with AutomaticKeepAliveClientMixin<InboxScreen> {
   late String token;
 
   @override
   void initState() {
     super.initState();
-    // Retrieve token and dispatch fetch event
     _fetchUnreadMessages();
   }
 
+  @override
+  bool get wantKeepAlive => true; // Ensures the screen state is kept alive when switching tabs
+
   Future<void> _fetchUnreadMessages() async {
-    // Retrieve token from secure storage
-    final retrievedToken = await ApiService().getSavedToken();
-    if (retrievedToken == null || retrievedToken.isEmpty) {
-      print('Error: Token is null or empty.');
-      return;
+    try {
+      final retrievedToken = await ApiService().getSavedToken();
+      if (retrievedToken == null || retrievedToken.isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Error: Unable to fetch token.')),
+        );
+        return;
+      }
+      token = retrievedToken;
+      print('Token retrieved in InboxScreen: $token');
+      context.read<GenericBloc>().add(FetchUnreadMessages(token: token));
+    } catch (error) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error fetching messages: $error')),
+      );
     }
-    token = retrievedToken;
-    print('Token retrieved in InboxScreen: $token');
-    
-    // Dispatch fetch event with the valid token
-    context.read<GenericBloc>().add(FetchUnreadMessages(token: token));
   }
 
   @override
   Widget build(BuildContext context) {
+    super.build(context); // Required for AutomaticKeepAliveClientMixin to function correctly
     return Scaffold(
-     appBar: AppBar(
-  title: const Text('Inbox'),
-  leading: IconButton(
-    icon: const Icon(Icons.arrow_back),
-    onPressed: () {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (context) => HomePage(
-            currentLocale: Localizations.localeOf(context),
-            token: token, // Pass the token to HomePage
+      appBar: AppBar(
+        title: const Text('Inbox'),
+        centerTitle: true, // Center the title
+        leading: null, // Remove the back icon
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.refresh),
+            onPressed: _fetchUnreadMessages, // Trigger message refresh on tap
           ),
-        ),
-      );
-    },
-  ),
-  actions: [
-    IconButton(
-      icon: const Icon(Icons.refresh),
-      onPressed: () {
-        context.read<GenericBloc>().add(FetchUnreadMessages(token: token));
-      },
-    ),
-  ],
-),
-
+        ],
+      ),
       body: BlocBuilder<GenericBloc, GenericState>(
         builder: (context, state) {
           if (state is GenericLoading) {
@@ -79,10 +72,7 @@ class _InboxScreenState extends State<InboxScreen> {
                   children: [
                     Icon(Icons.inbox, size: 64, color: Colors.grey),
                     const SizedBox(height: 16),
-                    const Text(
-                      'No unread messages.',
-                      style: TextStyle(fontSize: 18, color: Colors.grey),
-                    ),
+                    const Text('No unread messages.', style: TextStyle(fontSize: 16)),
                   ],
                 ),
               );
@@ -94,25 +84,6 @@ class _InboxScreenState extends State<InboxScreen> {
                 return ListTile(
                   title: Text(message['subject'] ?? 'No Subject'),
                   subtitle: Text(message['content'] ?? 'No Content'),
-                  trailing: IconButton(
-                    icon: const Icon(Icons.done),
-                    onPressed: () {
-                      // Dispatch event to mark as read
-                      context
-                          .read<GenericBloc>()
-                          .add(MarkMessageAsRead(messageId: message['id']));
-                    },
-                  ),
-                  onTap: () {
-                    // Navigate to a message detail screen
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) =>
-                            MessageDetailScreen(message: message),
-                      ),
-                    );
-                  },
                 );
               },
             );
@@ -121,21 +92,10 @@ class _InboxScreenState extends State<InboxScreen> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(
-                    state.message.contains('Invalid token')
-                        ? 'Session expired. Please log in again.'
-                        : state.message,
-                    style: const TextStyle(color: Colors.red),
-                  ),
+                  Text(state.message, style: const TextStyle(color: Colors.red)),
                   const SizedBox(height: 16),
                   ElevatedButton(
-                    onPressed: () {
-                      if (state.message.contains('Invalid token')) {
-                        Navigator.pushReplacementNamed(context, '/login');
-                      } else {
-                        _fetchUnreadMessages();
-                      }
-                    },
+                    onPressed: _fetchUnreadMessages, // Retry fetching messages on button press
                     child: const Text('Retry'),
                   ),
                 ],
@@ -145,38 +105,6 @@ class _InboxScreenState extends State<InboxScreen> {
             return const Center(child: Text('Unexpected state.'));
           }
         },
-      ),
-    );
-  }
-}
-
-class MessageDetailScreen extends StatelessWidget {
-  final Map<String, dynamic> message;
-
-  const MessageDetailScreen({Key? key, required this.message}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Message Details'),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              message['subject'] ?? 'No Subject',
-              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 16),
-            Text(
-              message['content'] ?? 'No Content',
-              style: const TextStyle(fontSize: 16),
-            ),
-          ],
-        ),
       ),
     );
   }

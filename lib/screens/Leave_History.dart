@@ -7,9 +7,7 @@ import 'package:hr/state_management/localization_service.dart'; // For localizat
 import 'package:intl/intl.dart';
 import 'package:hr/screens/home/HomePage.dart';
 
-void main() {
-  runApp(const LeaveHistoryApp());
-}
+
 
 class LeaveHistoryApp extends StatelessWidget {
   const LeaveHistoryApp({super.key});
@@ -41,16 +39,15 @@ class LeaveHistoryScreen extends StatelessWidget {
               color: Color.fromARGB(255, 0, 0, 0),
             ),
             onPressed: () {
-  Navigator.pop(
-    context,
-    MaterialPageRoute(
-      builder: (context) => HomePage(
-        currentLocale: Localizations.localeOf(context),
-        token: '',
-      ),
-    ),
-  );
-},
+                Navigator.pop(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => HomePage(
+                        currentLocale: Localizations.localeOf(context),
+                        token: ''),
+                  ),
+                );
+              },
           ),
         ),
         body: const Padding(

@@ -1,16 +1,38 @@
 import 'package:flutter/material.dart';
 
 class ProfileScreen extends StatelessWidget {
+  const ProfileScreen({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
+    // Get screen dimensions
+    final Size size = MediaQuery.of(context).size;
+    final double screenWidth = size.width;
+    final double screenHeight = size.height;
+
+    // Define responsive sizes based on screen dimensions.
+    final double avatarRadius = screenWidth * 0.10; // 10% of screen width
+    final double cardPadding = screenWidth * 0.04; // 4% of screen width
+    final double nameFontSize = screenWidth * 0.06; // 6% of screen width
+    final double emailFontSize = screenWidth * 0.036; // 4.5% of screen width
+    final double listTileFontSize = screenWidth * 0.045;
+    final double iconSize = screenWidth * 0.06;
+    final double logoutButtonVerticalPadding = screenHeight * 0.02; // 2% of screen height
+    final double appBarFontSize = screenWidth * 0.05;
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Profile'),
+        title: Text(
+          'Profile',
+          style: TextStyle(fontSize: appBarFontSize, color: Colors.black),
+        ),
         centerTitle: true,
-        backgroundColor: const Color.fromARGB(255, 255, 255, 255),
+        backgroundColor: Colors.white,
+        elevation: 0,
+        iconTheme: IconThemeData(color: Colors.black),
       ),
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: EdgeInsets.all(screenWidth * 0.04),
         child: ListView(
           children: [
             // Profile Header Section
@@ -20,39 +42,43 @@ class ProfileScreen extends StatelessWidget {
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Padding(
-                padding: const EdgeInsets.all(16.0),
+                padding: EdgeInsets.all(cardPadding),
                 child: Row(
                   children: [
-                    const CircleAvatar(
-                      radius: 40,
-                      backgroundImage: NetworkImage("https://randomuser.me/api/portraits/men/1.jpg"), // Replace with your image
+                    CircleAvatar(
+                      radius: avatarRadius,
+                      backgroundImage: const NetworkImage(
+                        "https://randomuser.me/api/portraits/men/1.jpg",
+                      ),
                     ),
-                    const SizedBox(width: 16),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          'Hasan Ahmad ', // Replace with dynamic username
-                          style: TextStyle(
-                            fontSize: 22,
-                            fontWeight: FontWeight.bold,
+                    SizedBox(width: screenWidth * 0.04),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Hasan Ahmad',
+                            style: TextStyle(
+                              fontSize: nameFontSize,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
-                        ),
-                        Text(
-                          'Hasanahmad@example.com', // Replace with dynamic email
-                          style: TextStyle(
-                            fontSize: 16,
-                            color: Colors.grey[600],
+                          SizedBox(height: screenHeight * 0.01),
+                          Text(
+                            'Hasanahmad@example.com',
+                            style: TextStyle(
+                              fontSize: emailFontSize,
+                              color: Colors.grey[600],
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ],
                 ),
               ),
             ),
-            const SizedBox(height: 20),
-            
+            SizedBox(height: screenHeight * 0.03),
             // Settings Section
             Card(
               elevation: 4,
@@ -62,24 +88,33 @@ class ProfileScreen extends StatelessWidget {
               child: Column(
                 children: [
                   ListTile(
-                    leading: const Icon(Icons.person),
-                    title: const Text('Edit Profile'),
+                    leading: Icon(Icons.person, size: iconSize),
+                    title: Text(
+                      'Edit Profile',
+                      style: TextStyle(fontSize: listTileFontSize),
+                    ),
                     onTap: () {
                       // Navigate to edit profile screen
                     },
                   ),
                   const Divider(),
                   ListTile(
-                    leading: const Icon(Icons.lock),
-                    title: const Text('Change Password'),
+                    leading: Icon(Icons.lock, size: iconSize),
+                    title: Text(
+                      'Change Password',
+                      style: TextStyle(fontSize: listTileFontSize),
+                    ),
                     onTap: () {
                       // Navigate to change password screen
                     },
                   ),
                   const Divider(),
                   ListTile(
-                    leading: const Icon(Icons.notifications),
-                    title: const Text('Notifications'),
+                    leading: Icon(Icons.notifications, size: iconSize),
+                    title: Text(
+                      'Notifications',
+                      style: TextStyle(fontSize: listTileFontSize),
+                    ),
                     onTap: () {
                       // Navigate to notifications settings
                     },
@@ -87,8 +122,7 @@ class ProfileScreen extends StatelessWidget {
                 ],
               ),
             ),
-            const SizedBox(height: 20),
-            
+            SizedBox(height: screenHeight * 0.03),
             // Logout Section
             ElevatedButton(
               onPressed: () {
@@ -96,14 +130,18 @@ class ProfileScreen extends StatelessWidget {
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFFCE5E52),
-                padding: const EdgeInsets.symmetric(vertical: 16),
+                padding: EdgeInsets.symmetric(vertical: logoutButtonVerticalPadding),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
               ),
-              child: const Text(
+              child: Text(
                 'Logout',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold , color: Colors.white),
+                style: TextStyle(
+                  fontSize: listTileFontSize,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
               ),
             ),
           ],

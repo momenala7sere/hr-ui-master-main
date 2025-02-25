@@ -6,8 +6,9 @@ import 'package:hr/screens/home/components/Drawer.dart';
 import 'package:hr/screens/home/components/DashboardCard.dart';
 import 'package:hr/screens/home/components/inbox_screen.dart';
 import 'package:hr/screens/home/components/notification_screen.dart';
-import 'package:hr/screens/home/components/CardData.dart'; // Contains CardData model and fromMap() method
-import 'package:hr/screens/home/dto/CardItems.dart'; // Contains the static card list (cardItems)
+import 'package:hr/screens/home/components/CardData.dart';
+import 'package:hr/screens/home/dto/CardItems.dart';
+import 'package:hr/screens/home/components/ShimmerLoadingScreen.dart';
 
 class HomePage extends StatefulWidget {
   final Locale currentLocale;
@@ -30,7 +31,6 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    // Cache the future so that the data is fetched only once.
     _futureDashboardData = _fetchDashboardData();
   }
 
@@ -53,28 +53,15 @@ class _HomePageState extends State<HomePage> {
               ],
             )
           : null,
-      drawer: FutureBuilder<Map<String, dynamic>>(
-        future: _futureDashboardData,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Drawer(child: Center(child: CircularProgressIndicator()));
-          } else if (snapshot.hasError) {
-            return const Drawer(child: Center(child: Text('Error fetching user menu')));
-          } else {
-            final userMenu = snapshot.data?['userMenu'] ?? [];
-            return buildDrawer(userMenu: userMenu);
-          }
-        },
-      ),
+      drawer: buildDrawer(userMenu: []),
       body: IndexedStack(
         index: _selectedIndex,
         children: [
-          // Home tab
           FutureBuilder<Map<String, dynamic>>(
             future: _futureDashboardData,
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Center(child: CircularProgressIndicator());
+                return const ShimmerLoadingScreen();
               } else if (snapshot.hasError) {
                 return Center(
                   child: Text(
@@ -88,11 +75,8 @@ class _HomePageState extends State<HomePage> {
               }
             },
           ),
-          // Inbox tab
           const InboxScreen(),
-          // Notifications tab
-          NotificationsScreen(),
-          // Profile tab
+          const NotificationsScreen(),
           ProfileScreen(),
         ],
       ),
@@ -180,16 +164,13 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
-  /// Fetches dashboard data including leave balance, notifications, messages, and cards.
   Future<Map<String, dynamic>> _fetchDashboardData() async {
     final apiService = ApiService();
     try {
-      final leaveBalance = await apiService.getLeaveBalance(widget.token, 1); // Replace 1 with actual userID as needed.
-      final notificationCount = await apiService.getUnreadNotifications(widget.token);
+      final leaveBalance = await apiService.getLeaveBalance(widget.token, 1);
       final messageCount = await apiService.getUnreadMessages(widget.token);
       final userMenu = await apiService.getUserMenu(widget.token, 1);
 
-      // Parse dynamic card data from the API response, if available.
       List<CardData> dynamicCards = [];
       if (userMenu['response'] != null && userMenu['response'] is List) {
         dynamicCards = (userMenu['response'] as List)
@@ -197,41 +178,32 @@ class _HomePageState extends State<HomePage> {
             .toList();
       }
 
-      // Merge static cards (from carditem.dart) with dynamic cards.
-      // For duplicates (by title), remove the static card and use the dynamic card,
-      // but update the dynamic card's routeName with the static card's routeName.
       final List<CardData> finalCards = [];
 
-      // Build a map for quick lookup of dynamic cards by title.
       final Map<String, CardData> dynamicMap = {
         for (var card in dynamicCards) card.title: card
       };
 
-      // Iterate through the static cards.
+      // Merge static and dynamic cards.
       for (var staticCard in cardItems) {
         if (dynamicMap.containsKey(staticCard.title)) {
-          // Duplicate found: Use the dynamic card data but preserve the static card's route.
           final dynCard = dynamicMap[staticCard.title]!;
           finalCards.add(CardData(
             title: dynCard.title,
             icon: dynCard.icon,
             color: dynCard.color,
-            routeName: staticCard.routeName, // Preserve the static navigator route.
+            routeName: staticCard.routeName,
             category: dynCard.category,
           ));
-          // Remove it from the map so it's not added twice.
           dynamicMap.remove(staticCard.title);
         } else {
-          // No duplicate; add the static card.
           finalCards.add(staticCard);
         }
       }
-      // Append any remaining dynamic cards (which did not match a static card).
       finalCards.addAll(dynamicMap.values);
 
       return {
         'leaveBalance': leaveBalance['balance'],
-        'notificationCount': notificationCount['count'],
         'messageCount': messageCount['count'],
         'cards': finalCards,
         'userMenu': userMenu,
@@ -241,31 +213,6 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  /// Groups cards into sections: Request, History, Report, Other.
-  Map<String, List<CardData>> _groupCards(List<CardData> cards) {
-    final Map<String, List<CardData>> groups = {
-      'Request': [],
-      'History': [],
-      'Report': [],
-      'Other': [],
-    };
-
-    for (var card in cards) {
-      final titleLower = card.title.toLowerCase();
-      if (titleLower.contains('history')) {
-        groups['History']!.add(card);
-      } else if (titleLower.contains('request')) {
-        groups['Request']!.add(card);
-      } else if (titleLower.contains('report')) {
-        groups['Report']!.add(card);
-      } else {
-        groups['Other']!.add(card);
-      }
-    }
-    return groups;
-  }
-
-  /// Builds the home page layout and displays the merged cards grouped into sections.
   Widget _buildHomePage(Map<String, dynamic> data) {
     List<CardData> cards = data['cards'] as List<CardData>;
     final groupedCards = _groupCards(cards);
@@ -288,12 +235,6 @@ class _HomePageState extends State<HomePage> {
               itemCount: groupedCards['History']!.length,
               items: groupedCards['History']!,
             ),
-          if (groupedCards['Report']!.isNotEmpty)
-            Section(
-              title: 'Report',
-              itemCount: groupedCards['Report']!.length,
-              items: groupedCards['Report']!,
-            ),
           if (groupedCards['Other']!.isNotEmpty)
             Section(
               title: 'Other',
@@ -304,9 +245,29 @@ class _HomePageState extends State<HomePage> {
       ),
     );
   }
+
+  // Updated grouping to include only Request, History, and Other.
+  Map<String, List<CardData>> _groupCards(List<CardData> cards) {
+    final Map<String, List<CardData>> groups = {
+      'Request': [],
+      'History': [],
+      'Other': [],
+    };
+
+    for (var card in cards) {
+      final titleLower = card.title.toLowerCase();
+      if (titleLower.contains('history')) {
+        groups['History']!.add(card);
+      } else if (titleLower.contains('request')) {
+        groups['Request']!.add(card);
+      } else {
+        groups['Other']!.add(card);
+      }
+    }
+    return groups;
+  }
 }
 
-/// A reusable widget that displays a grid of dashboard cards.
 class Section extends StatelessWidget {
   final String title;
   final int itemCount;
@@ -321,9 +282,6 @@ class Section extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    double screenHeight = MediaQuery.of(context).size.height;
-    double spacing = screenHeight * 0.05; // Optional spacing adjustment
-
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8.0),
       child: Column(
@@ -335,17 +293,29 @@ class Section extends StatelessWidget {
           ),
           Padding(
             padding: const EdgeInsets.all(8.0),
-            child: GridView.builder(
-              physics: const NeverScrollableScrollPhysics(),
-              shrinkWrap: true,
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 4, // 4 cards per row
-                crossAxisSpacing: 12.0,
-                mainAxisSpacing: 3,
-                childAspectRatio: 0.660,
-              ),
-              itemCount: itemCount,
-              itemBuilder: (context, index) => DashboardCard(cardData: items[index]),
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                const int crossAxisCount = 4;
+                final double totalSpacing = (crossAxisCount - 1) * 12.0;
+                final double itemWidth =
+                    (constraints.maxWidth - totalSpacing) / crossAxisCount;
+                final double itemHeight = itemWidth * 1.5;
+                final double aspectRatio = itemWidth / itemHeight;
+
+                return GridView.builder(
+                  physics: const NeverScrollableScrollPhysics(),
+                  shrinkWrap: true,
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: crossAxisCount,
+                    crossAxisSpacing: 9.0,
+                    mainAxisSpacing: 20.0,
+                    childAspectRatio: aspectRatio,
+                  ),
+                  itemCount: itemCount,
+                  itemBuilder: (context, index) =>
+                      DashboardCard(cardData: items[index]),
+                );
+              },
             ),
           ),
         ],

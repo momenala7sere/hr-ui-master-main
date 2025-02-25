@@ -10,7 +10,8 @@ class ApiService {
 
   // API Endpoints
   static const String loginEndpoint = 'Login/Login';
-  static const String getEmployeeDataEndpoint = 'Users/GetEmployeeData'; // Correct endpoint
+  static const String getEmployeeDataEndpoint =
+      'Users/GetEmployeeData'; // Correct endpoint
   static const String getLeaveBalanceEndpoint = 'Users/GetLeaveBalance';
   static const String getSickLeaveBalanceEndpoint = 'Users/GetSickLeaveBalance';
   static const String submitLeaveRequestEndpoint = 'Users/SubmitLeaveRequest';
@@ -28,7 +29,8 @@ class ApiService {
   }
 
   // General API GET request method with timeout
-  Future<Map<String, dynamic>> _getRequest(String endpoint, {String? token}) async {
+  Future<Map<String, dynamic>> _getRequest(String endpoint,
+      {String? token}) async {
     final client = IOClient(_createHttpClient());
     final url = Uri.parse('$baseUrl/$endpoint');
 
@@ -54,7 +56,8 @@ class ApiService {
       if (response.statusCode == 200) {
         return jsonDecode(response.body);
       } else {
-        throw Exception('HTTP Error: ${response.statusCode} - ${response.body}');
+        throw Exception(
+            'HTTP Error: ${response.statusCode} - ${response.body}');
       }
     } catch (e) {
       throw Exception('API request failed: $e');
@@ -62,7 +65,9 @@ class ApiService {
   }
 
   // General API POST request method with timeout
-  Future<Map<String, dynamic>> _postRequest(String endpoint, Map<String, dynamic> body, {String? token}) async {
+  Future<Map<String, dynamic>> _postRequest(
+      String endpoint, Map<String, dynamic> body,
+      {String? token}) async {
     final client = IOClient(_createHttpClient());
     final url = Uri.parse('$baseUrl/$endpoint');
 
@@ -76,7 +81,9 @@ class ApiService {
     print('Body: ${jsonEncode(body)}');
 
     try {
-      final response = await client.post(url, headers: headers, body: jsonEncode(body)).timeout(
+      final response = await client
+          .post(url, headers: headers, body: jsonEncode(body))
+          .timeout(
         const Duration(seconds: 10),
         onTimeout: () {
           throw TimeoutException("API request timed out");
@@ -94,7 +101,8 @@ class ApiService {
           throw Exception('API Error: ${responseBody['messageText']}');
         }
       } else {
-        throw Exception('HTTP Error: ${response.statusCode} - ${response.body}');
+        throw Exception(
+            'HTTP Error: ${response.statusCode} - ${response.body}');
       }
     } catch (e) {
       throw Exception('API request failed: $e');
@@ -105,8 +113,8 @@ class ApiService {
   Future<Map<String, dynamic>> getEmployeeData(String token, int userId) async {
     try {
       return await _postRequest(
-        getEmployeeDataEndpoint, 
-        {'UserID': userId}, 
+        getEmployeeDataEndpoint,
+        {'UserID': userId},
         token: token,
       );
     } catch (e) {
@@ -166,7 +174,8 @@ class ApiService {
   }
 
   // Get Sick Leave Balance API call
-  Future<Map<String, dynamic>> getSickLeaveBalance(String token, int userId) async {
+  Future<Map<String, dynamic>> getSickLeaveBalance(
+      String token, int userId) async {
     try {
       return await _postRequest(
         getSickLeaveBalanceEndpoint,
@@ -179,7 +188,8 @@ class ApiService {
   }
 
   // Submit Leave Request API call
-  Future<void> submitLeaveRequest(String token, Map<String, dynamic> leaveRequestData) async {
+  Future<void> submitLeaveRequest(
+      String token, Map<String, dynamic> leaveRequestData) async {
     try {
       await _postRequest(
         submitLeaveRequestEndpoint,
@@ -263,7 +273,9 @@ class ApiService {
         token: token,
       );
 
-      if (response['success'] == true && response['response'] is List && response['response'].isNotEmpty) {
+      if (response['success'] == true &&
+          response['response'] is List &&
+          response['response'].isNotEmpty) {
         return response['response'][0]['userID']; // Extract userID
       } else {
         return null;

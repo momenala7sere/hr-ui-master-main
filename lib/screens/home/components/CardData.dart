@@ -6,7 +6,7 @@ class CardData {
   final IconData icon;
   final Color color;
   final String routeName;
-  final String category; // Field for grouping
+  final String category; // Field for grouping, if needed
 
   CardData({
     required this.title,
@@ -42,39 +42,38 @@ class CardData {
     String? iconName;
     for (final part in parts) {
       if (part.startsWith('fa-')) {
-        iconName = part.substring(3); // remove the 'fa-' prefix
+        iconName = part.substring(3); // Remove the 'fa-' prefix
         break;
       }
     }
     // If no icon name is found, fallback to the title-based icon.
     if (iconName == null) return _getIconForTitle(title);
 
-    // Define a mapping dictionary from icon names to FontAwesomeIcons.
+    // Mapping dictionary from icon names to FontAwesomeIcons.
     final iconMap = <String, IconData>{
       'user-tag': FontAwesomeIcons.userTag,
       'user-plus': FontAwesomeIcons.userPlus,
       'user-clock': FontAwesomeIcons.userClock,
       'group': FontAwesomeIcons.users,
       'business-time': FontAwesomeIcons.businessTime,
-      'shopping-cart': FontAwesomeIcons.cartShopping, // Updated from shoppingCart
-      'history': FontAwesomeIcons.clockRotateLeft,     // Updated
-      'tasks': FontAwesomeIcons.listCheck,               // Updated
+      'shopping-cart': FontAwesomeIcons.cartShopping,
+      'history': FontAwesomeIcons.clockRotateLeft,
+      'tasks': FontAwesomeIcons.listCheck,
       'route': FontAwesomeIcons.route,
-      'laptop-house': FontAwesomeIcons.houseLaptop,      // Updated
+      'laptop-house': FontAwesomeIcons.houseLaptop,
       'door-open': FontAwesomeIcons.doorOpen,
-      'file-alt': FontAwesomeIcons.fileLines,            // Updated from fileAlt
-      'car-alt': FontAwesomeIcons.car,                   // Updated from carAlt
+      'file-alt': FontAwesomeIcons.fileLines,
+      'car-alt': FontAwesomeIcons.car,
       'plane': FontAwesomeIcons.plane,
       'paste': FontAwesomeIcons.paste,
-      'clock-o': FontAwesomeIcons.clock,                 // This may remain the same
+      'clock-o': FontAwesomeIcons.clock,
       'chalkboard': FontAwesomeIcons.chalkboard,
-      'calendar-alt': FontAwesomeIcons.calendarDays,     // Updated from calendarAlt
+      'calendar-alt': FontAwesomeIcons.calendarDays,
       'laptop': FontAwesomeIcons.laptop,
-      'questionCircle': FontAwesomeIcons.circleQuestion, // Updated from questionCircle
+      'questionCircle': FontAwesomeIcons.circleQuestion,
       // Add more mappings as needed.
     };
 
-    // Return the mapped icon or a default icon if no match is found.
     return iconMap[iconName] ?? FontAwesomeIcons.circleQuestion;
   }
 
@@ -90,16 +89,16 @@ class CardData {
     return Icons.help_outline; // Default fallback icon.
   }
 
-  /// Maps the card title to a predefined route name.
-  static String _getRouteNameForTitle(String title) {
-    if (title.contains('Vacation')) return '/vacation-request';
-    if (title.contains('Leave') && title.contains('Personal')) return '/personal-leave-request';
-    if (title.contains('Leave') && title.contains('Sick')) return '/sick-leave-request';
-    if (title.contains('History') && title.contains('Vacation')) return '/vacation-history';
-    if (title.contains('History') && title.contains('Leave')) return '/leaves-history';
-    if (title.contains('HR')) return '/hr-request';
-    if (title.contains('Request')) return '/track-my-request';
-    if (title.contains('Track')) return '/track-my-request';
-    return '/home'; // Fallback route if no match is found.
-  }
+ static String _getRouteNameForTitle(String title) {
+  if (title.contains('History') && title.contains('Vacation')) return '/vacation-history';
+  if (title.contains('History') && title.contains('Leave')) return '/leaves-history';
+  if (title.contains('Leave') && title.contains('Personal')) return '/personal-leave-request';
+  if (title.contains('Leave') && title.contains('Sick')) return '/sick-leave-request';
+  if (title.contains('Vacation')) return '/vacation-request';
+  if (title.contains('HR')) return '/hr-request';
+  if (title.contains('Request')) return '/track-my-request';
+  if (title.contains('Track')) return '/track-my-request';
+  return '/home'; // Fallback route if no match is found.
+}
+
 }

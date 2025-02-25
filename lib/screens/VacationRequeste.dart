@@ -85,8 +85,8 @@ class _VacationRequestFormState extends State<VacationRequestForm> {
       labelText: LocalizationService.translate(label),
       suffixIcon: suffixIcon,
       border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(5.0),
-        borderSide: BorderSide(color: Colors.grey.shade300, width: 0.5),
+        borderRadius: BorderRadius.circular(10.0),
+        borderSide: BorderSide(color: const Color.fromARGB(255, 0, 0, 0), width: 0.9),
       ),
       filled: true,
       fillColor: Colors.white,
@@ -100,13 +100,15 @@ class _VacationRequestFormState extends State<VacationRequestForm> {
       child: BlocListener<GenericBloc, GenericState>(
         listener: (context, state) {
           if (state is GenericLoaded) {
-            final successMessage = state.data['message'] ?? 'Request submitted!';
+            final successMessage =
+                state.data['message'] ?? 'Request submitted!';
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(content: Text(successMessage)),
             );
-            Navigator.pushReplacement(
+            Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => const VacationHistoryScreen()),
+              MaterialPageRoute(
+                  builder: (context) => const VacationHistoryScreen()),
             );
           } else if (state is GenericError) {
             ScaffoldMessenger.of(context).showSnackBar(
@@ -123,7 +125,7 @@ class _VacationRequestFormState extends State<VacationRequestForm> {
             actions: [
               TextButton(
                 onPressed: () {
-                  Navigator.pushReplacement(
+                  Navigator.push(
                     context,
                     MaterialPageRoute(
                       builder: (context) => const VacationHistoryScreen(),
@@ -145,13 +147,29 @@ class _VacationRequestFormState extends State<VacationRequestForm> {
                   decoration: _inputDecoration('vacation_type'),
                   value: _vacationType,
                   items: [
-                    DropdownMenuItem(value: 'funeral', child: Text(LocalizationService.translate('funeral'))),
-                    DropdownMenuItem(value: 'sick', child: Text(LocalizationService.translate('sick'))),
-                    DropdownMenuItem(value: 'official', child: Text(LocalizationService.translate('official'))),
-                    DropdownMenuItem(value: 'maternity', child: Text(LocalizationService.translate('maternity'))),
-                    DropdownMenuItem(value: 'overtime', child: Text(LocalizationService.translate('overtime'))),
-                    DropdownMenuItem(value: 'unpaid_vacation', child: Text(LocalizationService.translate('unpaid_vacation'))),
-                    DropdownMenuItem(value: 'umrah', child: Text(LocalizationService.translate('umrah'))),
+                    DropdownMenuItem(
+                        value: 'funeral',
+                        child: Text(LocalizationService.translate('funeral'))),
+                    DropdownMenuItem(
+                        value: 'sick',
+                        child: Text(LocalizationService.translate('sick'))),
+                    DropdownMenuItem(
+                        value: 'official',
+                        child: Text(LocalizationService.translate('official'))),
+                    DropdownMenuItem(
+                        value: 'maternity',
+                        child:
+                            Text(LocalizationService.translate('maternity'))),
+                    DropdownMenuItem(
+                        value: 'overtime',
+                        child: Text(LocalizationService.translate('overtime'))),
+                    DropdownMenuItem(
+                        value: 'unpaid_vacation',
+                        child: Text(
+                            LocalizationService.translate('unpaid_vacation'))),
+                    DropdownMenuItem(
+                        value: 'umrah',
+                        child: Text(LocalizationService.translate('umrah'))),
                   ],
                   onChanged: (String? newValue) {
                     setState(() {
@@ -163,14 +181,16 @@ class _VacationRequestFormState extends State<VacationRequestForm> {
                 TextFormField(
                   readOnly: true,
                   controller: _startDateController,
-                  decoration: _inputDecoration('start_date', suffixIcon: Icon(Icons.calendar_today)),
+                  decoration: _inputDecoration('start_date',
+                      suffixIcon: Icon(Icons.calendar_month)),
                   onTap: () => _selectDate(context, true),
                 ),
                 const SizedBox(height: 16.0),
                 TextFormField(
                   readOnly: true,
                   controller: _endDateController,
-                  decoration: _inputDecoration('end_date', suffixIcon: Icon(Icons.calendar_today)),
+                  decoration: _inputDecoration('end_date',
+                      suffixIcon: Icon(Icons.calendar_month)),
                   onTap: () => _selectDate(context, false),
                 ),
                 const SizedBox(height: 16.0),
@@ -205,12 +225,13 @@ class _VacationRequestFormState extends State<VacationRequestForm> {
                 const SizedBox(height: 16.0),
                 Container(
                   decoration: BoxDecoration(
-                    border: Border.all(color: Colors.grey.shade300, width: 0.5),
+                    border: Border.all(color: const Color.fromARGB(255, 0, 0, 0), width: 0.5),
                     borderRadius: BorderRadius.circular(5),
                   ),
                   child: InkWell(
                     onTap: () async {
-                      FilePickerResult? result = await FilePicker.platform.pickFiles();
+                      FilePickerResult? result =
+                          await FilePicker.platform.pickFiles();
 
                       if (result != null) {
                         setState(() {
@@ -265,9 +286,10 @@ class _VacationRequestFormState extends State<VacationRequestForm> {
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(6.0),
                             ),
-                            side: BorderSide(
-                              color: Colors.grey.shade300,
-                              width: 0.5,
+                            side: const BorderSide(
+                              color: Colors
+                                  .black, // Changed from Colors.grey.shade300 to Colors.black
+                              width: 0.7,
                             ),
                           ),
                         ),
@@ -289,7 +311,7 @@ class _VacationRequestFormState extends State<VacationRequestForm> {
                             ),
                           ),
                           style: OutlinedButton.styleFrom(
-                            backgroundColor: Colors.red,
+                            backgroundColor: Color(0xFFCE5E52),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(6.0),
                             ),

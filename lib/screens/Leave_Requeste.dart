@@ -181,7 +181,7 @@ class _LeaveRequestFormState extends State<LeaveRequestForm> {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(content: Text(successMessage)),
             );
-            Navigator.pushReplacement(
+            Navigator.push(
               context,
               MaterialPageRoute(
                   builder: (context) => const LeaveHistoryScreen()),
