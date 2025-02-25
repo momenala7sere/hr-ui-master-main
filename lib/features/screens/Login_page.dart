@@ -34,8 +34,8 @@ class _LoginPageState extends State<LoginPage> {
   @override
   void initState() {
     super.initState();
-    _usernameController.text = 'test_user'; // Default username
-    _passwordController.text = 'test_pass'; // Default password
+    _usernameController.text = 'MobileUser';
+    _passwordController.text = r'K@rAPI$$UserAdmin&&';
     _loadSavedCredentials();
   }
 

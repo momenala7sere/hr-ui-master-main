@@ -1,139 +1,158 @@
 import 'package:flutter/material.dart';
-import 'package:hr/state_management/localization_service.dart'; // Import localization service
+import 'package:hr/state_management/localization_service.dart'; // Assuming this exists
 import 'package:hr/screens/home/HomePage.dart';
 
-Widget buildDrawer({required List<dynamic> userMenu}) {
+Widget buildDrawer(BuildContext context, {required List<dynamic> userMenu}) {
   return Drawer(
+    elevation: 8.0,
+    shape: const RoundedRectangleBorder(
+      borderRadius: BorderRadius.horizontal(right: Radius.circular(16)),
+    ),
     child: ListView(
       padding: EdgeInsets.zero,
       children: [
-        Container(
-          padding: const EdgeInsets.symmetric(vertical: 20),
-          decoration: const BoxDecoration(
-            color: Color(0x00f7f2fa), // Background color
+        UserAccountsDrawerHeader(
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.surfaceContainer,
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
           ),
-          child: Column(
-            children: [
-              ClipOval(
-                child: const Image(
-                  image: AssetImage("assets/images/karlogo.png"),
-                  fit: BoxFit.cover,
-                  width: 80, // Adjust size if needed
-                  height: 80,
-                ),
-              ),
-              const SizedBox(height: 10),
-              Text(
-                LocalizationService.translate("admin_user"),
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: Color.fromARGB(255, 0, 0, 0),
-                ),
-              ),
-              Text(
-                LocalizationService.translate("human_resources"),
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: Color.fromARGB(255, 0, 0, 0), // Text color
-                ),
-              ),
-            ],
+          accountName: Text(
+            LocalizationService.translate("admin_user"),
+            style: Theme.of(context).textTheme.titleLarge?.copyWith(
+              fontWeight: FontWeight.bold,
+              color: Theme.of(context).colorScheme.onSurface,
+            ),
+          ),
+          accountEmail: Text(
+            LocalizationService.translate("human_resources"),
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
+          ),
+          currentAccountPicture: CircleAvatar(
+            backgroundImage: const AssetImage("assets/images/karlogo.png"),
+            radius: 40,
+            backgroundColor: Theme.of(context).colorScheme.surface,
           ),
         ),
-        // Dynamically create user menu items
         ...userMenu.map((item) {
           return buildDrawerItem(
-            Icons.menu, // Replace with actual icon or use dynamic icon if provided in data
-            item['name'] ?? 'Unnamed', // Use 'name' key or fallback text
+            context: context, // Pass context to buildDrawerItem
+            icon: Icons.menu,
+            text: item['name'] ?? 'Unnamed',
           );
         }).toList(),
         buildDivider(),
         buildDrawerItem(
-          Icons.account_circle_rounded,
-          LocalizationService.translate("employee_code"),
+          context: context,
+          icon: Icons.account_circle_rounded,
+          text: LocalizationService.translate("employee_code"),
         ),
         buildDivider(),
         buildDrawerItem(
-          Icons.apartment,
-          LocalizationService.translate("company"),
+          context: context,
+          icon: Icons.apartment,
+          text: LocalizationService.translate("company"),
         ),
         buildDivider(),
         buildDrawerItem(
-          Icons.calendar_month,
-          LocalizationService.translate("hiring_date"),
+          context: context,
+          icon: Icons.calendar_month,
+          text: LocalizationService.translate("hiring_date"),
         ),
-        buildDivider(),
       ],
     ),
   );
 }
 
-Widget buildEndDrawer() {
+Widget buildEndDrawer(BuildContext context) {
   return Drawer(
+    elevation: 8.0,
+    shape: const RoundedRectangleBorder(
+      borderRadius: BorderRadius.horizontal(left: Radius.circular(16)),
+    ),
     child: ListView(
       padding: EdgeInsets.zero,
       children: [
         SizedBox(
-          height: 90,
+          height: 100,
           child: DrawerHeader(
+            decoration: BoxDecoration(
+              color: Theme.of(context).colorScheme.surfaceContainer,
+            ),
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                IconButton(
-                  icon: const Icon(Icons.home),
-                  onPressed: () {
-                    MaterialPageRoute(
-                      builder: (context) => HomePage(
-                        currentLocale:
-                            Localizations.localeOf(context), token: '', // Pass locale
-                      ),
-                    );
-                  },
+                Row(
+                  children: [
+                    IconButton(
+                      icon: Icon(Icons.home, color: Theme.of(context).colorScheme.primary),
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => HomePage(
+                              currentLocale: Localizations.localeOf(context),
+                              token: '',
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                    const SizedBox(width: 16),
+                    Icon(Icons.mail, color: Theme.of(context).colorScheme.onSurfaceVariant),
+                    const SizedBox(width: 16),
+                    Icon(Icons.notifications, color: Theme.of(context).colorScheme.onSurfaceVariant),
+                  ],
                 ),
-                const SizedBox(width: 13.0),
-                const Icon(Icons.mail),
-                const SizedBox(width: 13.0),
-                const Icon(Icons.notifications),
-                const SizedBox(width: 13.0),
-                Text(
-                  LocalizationService.translate("employee_name"),
-                  style: const TextStyle(
-                    fontSize: 14.0,
-                    fontWeight: FontWeight.bold,
+                Flexible(
+                  child: Text(
+                    LocalizationService.translate("employee_name"),
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: Theme.of(context).colorScheme.onSurface,
+                    ),
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ),
               ],
             ),
           ),
         ),
-        const SizedBox(
-          height: 20,
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            buildStatusContainer(
-              Icons.person,
-              LocalizationService.translate("annual_leave"),
-              LocalizationService.translate("annual_leave_days"),
-            ),
-            buildStatusContainer(
-              Icons.hotel,
-              LocalizationService.translate("sick_leave"),
-              LocalizationService.translate("sick_leave_days"),
-            ),
-          ],
-        ),
-        const SizedBox(height: 20),
-        buildDivider(),
-        buildStatusRow(
-          LocalizationService.translate("requested_vacations"),
-          LocalizationService.translate("requested_vacation_days"),
-        ),
-        buildDivider(),
-        buildStatusRow(
-          LocalizationService.translate("remaining_sick_leave"),
-          LocalizationService.translate("remaining_sick_leave_days"),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          child: Column(
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  buildStatusContainer(
+                    context: context, // Pass context
+                    icon: Icons.person,
+                    title: LocalizationService.translate("annual_leave"),
+                    value: LocalizationService.translate("annual_leave_days"),
+                  ),
+                  buildStatusContainer(
+                    context: context, // Pass context
+                    icon: Icons.hotel,
+                    title: LocalizationService.translate("sick_leave"),
+                    value: LocalizationService.translate("sick_leave_days"),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 24),
+              buildDivider(),
+              buildStatusRow(
+                LocalizationService.translate("requested_vacations"),
+                LocalizationService.translate("requested_vacation_days"),
+              ),
+              buildDivider(),
+              buildStatusRow(
+                LocalizationService.translate("remaining_sick_leave"),
+                LocalizationService.translate("remaining_sick_leave_days"),
+              ),
+            ],
+          ),
         ),
       ],
     ),
@@ -143,94 +162,107 @@ Widget buildEndDrawer() {
 Widget buildProfileButton(BuildContext context) {
   return Padding(
     padding: const EdgeInsets.only(right: 8),
-    child: Builder(
-      builder: (context) {
-        return IconButton(
-          icon: const Icon(
-            Icons.account_circle,
-            size: 30,
-          ),
-          onPressed: () => Scaffold.of(context).openEndDrawer(),
-        );
-      },
+    child: IconButton(
+      icon: Icon(
+        Icons.account_circle,
+        size: 30,
+        color: Theme.of(context).colorScheme.primary,
+      ),
+      onPressed: () => Scaffold.of(context).openEndDrawer(),
     ),
   );
 }
 
-Widget buildDrawerItem(IconData icon, String text) {
+Widget buildDrawerItem({required BuildContext context, required IconData icon, required String text}) {
   return ListTile(
-    leading: Icon(icon),
-    title: Text(text),
+    leading: Icon(icon, color: Theme.of(context).colorScheme.primary),
+    title: Text(
+
+      text,
+      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+        fontSize: 12,
+        color: Theme.of(context).colorScheme.onSurface,
+      ),
+    ),
+    dense: true,
+    visualDensity: const VisualDensity(vertical: -1),
+    onTap: () {},
   );
 }
 
 Widget buildDivider() {
-  return const Divider(
-    color: Colors.grey,
-    thickness: 0.5,
-    height: 20,
+  return Divider(
+    color: Colors.grey.shade300, // Fallback if theme isn’t available
+    thickness: 1,
+    height: 8,
   );
 }
 
-Widget buildStatusContainer(IconData icon, String title, String value) {
-  return Container(
-    height: 140,
-    width: 140,
-    padding: const EdgeInsets.all(10.0),
-    decoration: BoxDecoration(
-      color: const Color(0xffCE5E52),
-      borderRadius: BorderRadius.circular(10.0),
-      boxShadow: [
-        BoxShadow(
-          color: const Color.fromARGB(255, 0, 0, 0).withOpacity(0.3),
-          blurRadius: 5.0,
-          spreadRadius: 1.0,
-          offset: const Offset(2.0, 2.0),
+Widget buildStatusContainer({
+  required BuildContext context,
+  required IconData icon,
+  required String title,
+  required String value,
+}) {
+  return Card(
+    elevation: 2,
+    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+    color: Theme.of(context).colorScheme.secondaryContainer,
+    child: SizedBox(
+      height: 120,
+      width: 140,
+      child: Padding(
+        padding: const EdgeInsets.all(12.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              icon,
+              size: 36,
+              color: Theme.of(context).colorScheme.onSecondaryContainer,
+            ),
+            const SizedBox(height: 8),
+            Text(
+              title,
+              style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                fontWeight: FontWeight.bold,
+                color: Theme.of(context).colorScheme.onSecondaryContainer,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 4),
+            Text(
+              value,
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                color: Theme.of(context).colorScheme.onSecondaryContainer,
+              ),
+            ),
+          ],
         ),
-      ],
-    ),
-    child: Column(
-      children: [
-        Icon(icon, size: 40, color: Colors.white),
-        const SizedBox(height: 15),
-        Text(
-          title,
-          style: const TextStyle(
-            fontSize: 12.0,
-            fontWeight: FontWeight.bold,
-            color: Colors.white,
-          ),
-        ),
-        const SizedBox(height: 5),
-        Text(
-          value,
-          style: const TextStyle(fontSize: 16.0, color: Colors.white),
-        ),
-      ],
+      ),
     ),
   );
 }
 
 Widget buildStatusRow(String title, String value) {
   return Padding(
-    padding: const EdgeInsets.all(8.0),
+    padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
     child: Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text(
           title,
           style: const TextStyle(
-            fontSize: 12.0,
-            fontWeight: FontWeight.bold,
+            fontSize: 16,
             color: Colors.grey,
           ),
         ),
         Text(
           value,
           style: const TextStyle(
-            fontSize: 12.0,
+            fontSize: 14,
             fontWeight: FontWeight.bold,
-            color: Color.fromARGB(255, 104, 104, 104),
+            color: Colors.black87,
           ),
         ),
       ],

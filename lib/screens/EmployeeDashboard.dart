@@ -6,7 +6,7 @@ import 'package:hr/state_management/generic_event.dart';
 import 'package:hr/state_management/generic_state.dart';
 
 class EmployeeDashboard extends StatefulWidget {
-  const EmployeeDashboard({Key? key}) : super(key: key);
+  const EmployeeDashboard({super.key});
 
   @override
   _EmployeeDashboardState createState() => _EmployeeDashboardState();
@@ -39,7 +39,7 @@ class _EmployeeDashboardState extends State<EmployeeDashboard> {
       child: SingleChildScrollView(
         child: Container(
           padding: const EdgeInsets.all(8),
-          color: const Color(0xFFFEF7FF),
+          color: const Color(0xffF9F8F6),
           child: Column(
             children: [
               // Row for the 3 equally spaced boxes (Annual Leave, Sick Leave, Employee Info)
@@ -88,8 +88,8 @@ class _EmployeeBox extends StatelessWidget {
 
   const _EmployeeBox({
     required this.height,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -116,16 +116,16 @@ class _EmployeeBox extends StatelessWidget {
             backgroundImage:
                 NetworkImage("https://randomuser.me/api/portraits/men/1.jpg"),
           ),
-          SizedBox(height: 20),
+          SizedBox(height: 5),
           Text(
             "Employee Test Name",
-            style: TextStyle(fontSize: 9, fontWeight: FontWeight.bold),
+            style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
             textAlign: TextAlign.center,
           ),
           SizedBox(height: 3),
           Text(
             "Employee No. 18093484914",
-            style: TextStyle(fontSize: 6, color: Colors.grey),
+            style: TextStyle(fontSize: 10, color: Colors.grey),
             textAlign: TextAlign.center,
           ),
         ],
@@ -145,8 +145,8 @@ class _LeaveBox extends StatelessWidget {
     required this.title,
     required this.description,
     required this.height,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -171,7 +171,7 @@ class _LeaveBox extends StatelessWidget {
           Text(
             balance,
             style: const TextStyle(
-              fontSize: 15,
+              fontSize: 17,
               color: Colors.red,
               fontWeight: FontWeight.bold,
             ),
@@ -180,7 +180,7 @@ class _LeaveBox extends StatelessWidget {
           Text(
             title,
             style: const TextStyle(
-              fontSize: 12,
+              fontSize: 14,
               fontWeight: FontWeight.w600,
             ),
             textAlign: TextAlign.center,
@@ -189,7 +189,7 @@ class _LeaveBox extends StatelessWidget {
           Text(
             description,
             style: const TextStyle(
-              fontSize: 10,
+              fontSize: 12,
               color: Colors.grey,
             ),
             textAlign: TextAlign.center,
@@ -201,7 +201,7 @@ class _LeaveBox extends StatelessWidget {
 }
 
 class _RecentRequestsBox extends StatelessWidget {
-  const _RecentRequestsBox({Key? key}) : super(key: key);
+  const _RecentRequestsBox({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -228,7 +228,7 @@ class _RecentRequestsBox extends StatelessWidget {
               const Text(
                 "Recent Requests",
                 style: TextStyle(
-                    fontSize: 10,
+                    fontSize: 13,
                     color: Colors.red,
                     fontWeight: FontWeight.bold),
               ),
@@ -237,7 +237,7 @@ class _RecentRequestsBox extends StatelessWidget {
                 child: const Text(
                   "See All",
                   style: TextStyle(
-                      fontSize: 10,
+                      fontSize: 13,
                       color: Colors.redAccent,
                       fontWeight: FontWeight.bold),
                 ),
@@ -279,8 +279,8 @@ class _RequestRow extends StatelessWidget {
     required this.dateTime,
     required this.status,
     required this.statusColor,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -294,12 +294,12 @@ class _RequestRow extends StatelessWidget {
               Text(
                 id,
                 style:
-                    const TextStyle(fontSize: 9, fontWeight: FontWeight.bold),
+                    const TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
               ),
-              const SizedBox(width: 6),
+              const SizedBox(width: 13),
               Text(
                 type,
-                style: const TextStyle(fontSize: 9, color: Colors.grey),
+                style: const TextStyle(fontSize: 12, color: Colors.grey),
               ),
             ],
           ),
@@ -308,13 +308,13 @@ class _RequestRow extends StatelessWidget {
           flex: 2,
           child: Text(
             dateTime,
-            style: const TextStyle(fontSize: 9, color: Colors.grey),
+            style: const TextStyle(fontSize: 12, color: Colors.grey),
           ),
         ),
         Expanded(
           flex: 1,
           child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+            padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
             decoration: BoxDecoration(
               color: statusColor.withOpacity(0.1),
               borderRadius: BorderRadius.circular(6),
@@ -322,7 +322,7 @@ class _RequestRow extends StatelessWidget {
             child: Text(
               status,
               style: TextStyle(
-                  fontSize: 9, fontWeight: FontWeight.bold, color: statusColor),
+                  fontSize: 12, fontWeight: FontWeight.bold, color: statusColor),
               textAlign: TextAlign.center,
             ),
           ),

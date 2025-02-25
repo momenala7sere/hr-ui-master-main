@@ -10,65 +10,77 @@ class ProfileScreen extends StatelessWidget {
     final double screenWidth = size.width;
     final double screenHeight = size.height;
 
-    // Define responsive sizes based on screen dimensions.
-    final double avatarRadius = screenWidth * 0.10; // 10% of screen width
-    final double cardPadding = screenWidth * 0.04; // 4% of screen width
-    final double nameFontSize = screenWidth * 0.06; // 6% of screen width
-    final double emailFontSize = screenWidth * 0.036; // 4.5% of screen width
-    final double listTileFontSize = screenWidth * 0.045;
-    final double iconSize = screenWidth * 0.06;
-    final double logoutButtonVerticalPadding = screenHeight * 0.02; // 2% of screen height
-    final double appBarFontSize = screenWidth * 0.05;
+    // Responsive sizes based on MD3 guidelines
+    final double avatarRadius = screenWidth * 0.12; // Slightly larger for prominence
+    final double padding = screenWidth * 0.05; // Consistent spacing
+    final double iconSize = screenWidth * 0.07;
 
     return Scaffold(
+      // AppBar with MD3 styling
       appBar: AppBar(
         title: Text(
           'Profile',
-          style: TextStyle(fontSize: appBarFontSize, color: Colors.black),
+          style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+            color: Theme.of(context).colorScheme.onSurface,
+          ),
         ),
         centerTitle: true,
-        backgroundColor: Colors.white,
-        elevation: 0,
-        iconTheme: IconThemeData(color: Colors.black),
+        backgroundColor: Theme.of(context).colorScheme.surface,
+        elevation: 0, // Flat AppBar per MD3
+        scrolledUnderElevation: 1, // Subtle elevation on scroll
+        iconTheme: IconThemeData(
+          color: Theme.of(context).colorScheme.onSurfaceVariant,
+        ),
       ),
       body: Padding(
-        padding: EdgeInsets.all(screenWidth * 0.04),
+        padding: EdgeInsets.all(padding),
         child: ListView(
           children: [
-            // Profile Header Section
+            // Profile Header Section (MD3 Card)
             Card(
-              elevation: 4,
+              elevation: 0, // Tonal elevation via surfaceTint
+              color: Theme.of(context).colorScheme.surfaceContainerLow,
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(16), // MD3 larger radius
               ),
               child: Padding(
-                padding: EdgeInsets.all(cardPadding),
+                padding: EdgeInsets.all(padding * 1.5),
                 child: Row(
                   children: [
                     CircleAvatar(
                       radius: avatarRadius,
+                      backgroundColor:
+                      Theme.of(context).colorScheme.surfaceContainerHighest,
                       backgroundImage: const NetworkImage(
                         "https://randomuser.me/api/portraits/men/1.jpg",
                       ),
                     ),
-                    SizedBox(width: screenWidth * 0.04),
+                    SizedBox(width: padding),
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
                             'Hasan Ahmad',
-                            style: TextStyle(
-                              fontSize: nameFontSize,
-                              fontWeight: FontWeight.bold,
+                            style: Theme.of(context)
+                                .textTheme
+                                .headlineSmall
+                                ?.copyWith(
+                              fontWeight: FontWeight.w600,
+                              color:
+                              Theme.of(context).colorScheme.onSurface,
                             ),
                           ),
                           SizedBox(height: screenHeight * 0.01),
                           Text(
                             'Hasanahmad@example.com',
-                            style: TextStyle(
-                              fontSize: emailFontSize,
-                              color: Colors.grey[600],
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyLarge
+                                ?.copyWith(
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .onSurfaceVariant,
                             ),
                           ),
                         ],
@@ -78,42 +90,84 @@ class ProfileScreen extends StatelessWidget {
                 ),
               ),
             ),
-            SizedBox(height: screenHeight * 0.03),
-            // Settings Section
+            SizedBox(height: screenHeight * 0.04),
+            // Settings Section (MD3 Card with ListTiles)
             Card(
-              elevation: 4,
+              elevation: 0,
+              color: Theme.of(context).colorScheme.surfaceContainerLow,
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(16),
               ),
               child: Column(
                 children: [
                   ListTile(
-                    leading: Icon(Icons.person, size: iconSize),
+                    leading: Icon(
+                      Icons.person_outline,
+                      size: iconSize,
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    ),
                     title: Text(
                       'Edit Profile',
-                      style: TextStyle(fontSize: listTileFontSize),
+                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                        color: Theme.of(context).colorScheme.onSurface,
+                      ),
+                    ),
+                    trailing: Icon(
+                      Icons.arrow_forward_ios,
+                      size: iconSize * 0.6,
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
                     ),
                     onTap: () {
                       // Navigate to edit profile screen
                     },
                   ),
-                  const Divider(),
+                  Divider(
+                    indent: padding * 2,
+                    endIndent: padding * 2,
+                    color: Theme.of(context).colorScheme.outlineVariant,
+                  ),
                   ListTile(
-                    leading: Icon(Icons.lock, size: iconSize),
+                    leading: Icon(
+                      Icons.lock_outline,
+                      size: iconSize,
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    ),
                     title: Text(
                       'Change Password',
-                      style: TextStyle(fontSize: listTileFontSize),
+                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                        color: Theme.of(context).colorScheme.onSurface,
+                      ),
+                    ),
+                    trailing: Icon(
+                      Icons.arrow_forward_ios,
+                      size: iconSize * 0.6,
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
                     ),
                     onTap: () {
                       // Navigate to change password screen
                     },
                   ),
-                  const Divider(),
+                  Divider(
+                    indent: padding * 2,
+                    endIndent: padding * 2,
+                    color: Theme.of(context).colorScheme.outlineVariant,
+                  ),
                   ListTile(
-                    leading: Icon(Icons.notifications, size: iconSize),
+                    leading: Icon(
+                      Icons.notifications_outlined,
+                      size: iconSize,
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    ),
                     title: Text(
                       'Notifications',
-                      style: TextStyle(fontSize: listTileFontSize),
+                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                        color: Theme.of(context).colorScheme.onSurface,
+                      ),
+                    ),
+                    trailing: Icon(
+                      Icons.arrow_forward_ios,
+                      size: iconSize * 0.6,
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
                     ),
                     onTap: () {
                       // Navigate to notifications settings
@@ -122,25 +176,26 @@ class ProfileScreen extends StatelessWidget {
                 ],
               ),
             ),
-            SizedBox(height: screenHeight * 0.03),
-            // Logout Section
-            ElevatedButton(
+            SizedBox(height: screenHeight * 0.04),
+            // Logout Button (MD3 Filled Tonal Button)
+            FilledButton.tonal(
               onPressed: () {
                 // Handle logout action
               },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFFCE5E52),
-                padding: EdgeInsets.symmetric(vertical: logoutButtonVerticalPadding),
+              style: FilledButton.styleFrom(
+                backgroundColor: Theme.of(context).colorScheme.errorContainer,
+                foregroundColor: Theme.of(context).colorScheme.onErrorContainer,
+                padding: EdgeInsets.symmetric(vertical: screenHeight * 0.02),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
+                minimumSize: const Size.fromHeight(50), // MD3 minimum height
               ),
               child: Text(
                 'Logout',
-                style: TextStyle(
-                  fontSize: listTileFontSize,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
+                style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                  fontWeight: FontWeight.w600,
+                  color: Theme.of(context).colorScheme.onErrorContainer,
                 ),
               ),
             ),
@@ -149,4 +204,20 @@ class ProfileScreen extends StatelessWidget {
       ),
     );
   }
+}
+
+// Example main.dart to apply MD3 Theme
+void main() {
+  runApp(
+    MaterialApp(
+      theme: ThemeData.from(
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: Colors.blue,
+          brightness: Brightness.light,
+        ),
+        useMaterial3: true,
+      ),
+      home: const ProfileScreen(),
+    ),
+  );
 }

@@ -86,7 +86,7 @@ class _VacationRequestFormState extends State<VacationRequestForm> {
       suffixIcon: suffixIcon,
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(10.0),
-        borderSide: BorderSide(color: const Color.fromARGB(255, 0, 0, 0), width: 0.9),
+        borderSide: const BorderSide(color: Color.fromARGB(255, 0, 0, 0), width: 0.3),
       ),
       filled: true,
       fillColor: Colors.white,
@@ -182,7 +182,7 @@ class _VacationRequestFormState extends State<VacationRequestForm> {
                   readOnly: true,
                   controller: _startDateController,
                   decoration: _inputDecoration('start_date',
-                      suffixIcon: Icon(Icons.calendar_month)),
+                      suffixIcon: const Icon(Icons.calendar_month)),
                   onTap: () => _selectDate(context, true),
                 ),
                 const SizedBox(height: 16.0),
@@ -190,7 +190,7 @@ class _VacationRequestFormState extends State<VacationRequestForm> {
                   readOnly: true,
                   controller: _endDateController,
                   decoration: _inputDecoration('end_date',
-                      suffixIcon: Icon(Icons.calendar_month)),
+                      suffixIcon: const Icon(Icons.calendar_month)),
                   onTap: () => _selectDate(context, false),
                 ),
                 const SizedBox(height: 16.0),
@@ -225,7 +225,8 @@ class _VacationRequestFormState extends State<VacationRequestForm> {
                 const SizedBox(height: 16.0),
                 Container(
                   decoration: BoxDecoration(
-                    border: Border.all(color: const Color.fromARGB(255, 0, 0, 0), width: 0.5),
+                    border: Border.all(color: const Color.fromARGB(
+                        255, 58, 58, 58), width: 0.3),
                     borderRadius: BorderRadius.circular(5),
                   ),
                   child: InkWell(
@@ -311,11 +312,11 @@ class _VacationRequestFormState extends State<VacationRequestForm> {
                             ),
                           ),
                           style: OutlinedButton.styleFrom(
-                            backgroundColor: Color(0xFFCE5E52),
+                            backgroundColor: const Color(0xFFCE5E52),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(6.0),
                             ),
-                            side: BorderSide(
+                            side: const BorderSide(
                               color: Color(0xffCE5E52),
                               width: 0.5,
                             ),

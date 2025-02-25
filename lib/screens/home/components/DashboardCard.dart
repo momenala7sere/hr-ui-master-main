@@ -8,7 +8,7 @@ class DashboardCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    double cardSize = 55.0;
+    double cardSize = 65.0;
 
     return GestureDetector(
       onTap: () {
@@ -34,7 +34,7 @@ class DashboardCard extends StatelessWidget {
               child: Center(
                 child: Icon(
                   cardData.icon,
-                  size: 32.0,
+                  size: 25.0,
                   color: Colors.white,
                 ),
               ),

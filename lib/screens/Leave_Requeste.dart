@@ -161,7 +161,7 @@ class _LeaveRequestFormState extends State<LeaveRequestForm> {
         context.read<GenericBloc>().add(SubmitLeaveRequest(data: requestData));
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error: Token not found')),
+          const SnackBar(content: Text('Error: Token not found')),
         );
       }
     }
@@ -239,7 +239,7 @@ class _LeaveRequestFormState extends State<LeaveRequestForm> {
                       contentPadding: const EdgeInsets.symmetric(
                           vertical: 10, horizontal: 12),
                       border: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.black, width: 0.5),
+                        borderSide: const BorderSide(color: Colors.black, width: 0.3),
                         borderRadius: BorderRadius.circular(5),
                       ),
                     ),
@@ -270,7 +270,7 @@ class _LeaveRequestFormState extends State<LeaveRequestForm> {
                       contentPadding: const EdgeInsets.symmetric(
                           vertical: 10, horizontal: 12),
                       border: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.black, width: 0.5),
+                        borderSide: const BorderSide(color: Colors.black, width: 0.3),
                         borderRadius: BorderRadius.circular(5),
                       ),
                     ),
@@ -290,7 +290,7 @@ class _LeaveRequestFormState extends State<LeaveRequestForm> {
                       contentPadding: const EdgeInsets.symmetric(
                           vertical: 10, horizontal: 12),
                       border: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.black, width: 0.5),
+                        borderSide: const BorderSide(color: Colors.black, width: 0.3),
                         borderRadius: BorderRadius.circular(5),
                       ),
                     ),
@@ -332,7 +332,7 @@ class _LeaveRequestFormState extends State<LeaveRequestForm> {
                       contentPadding: const EdgeInsets.symmetric(
                           vertical: 10, horizontal: 12),
                       border: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.black, width: 0.5),
+                        borderSide: const BorderSide(color: Colors.black, width: 0.3),
                         borderRadius: BorderRadius.circular(5),
                       ),
                     ),
@@ -358,7 +358,7 @@ class _LeaveRequestFormState extends State<LeaveRequestForm> {
                       contentPadding: const EdgeInsets.symmetric(
                           vertical: 10, horizontal: 12),
                       border: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.black, width: 0.5),
+                        borderSide: const BorderSide(color: Colors.black, width: 0.3),
                         borderRadius: BorderRadius.circular(5),
                       ),
                     ),
@@ -381,7 +381,7 @@ class _LeaveRequestFormState extends State<LeaveRequestForm> {
                       contentPadding: const EdgeInsets.symmetric(
                           vertical: 10, horizontal: 12),
                       border: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.black, width: 0.5),
+                        borderSide: const BorderSide(color: Colors.black, width: 0.3),
                         borderRadius: BorderRadius.circular(5),
                       ),
                     ),
